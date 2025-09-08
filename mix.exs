@@ -26,6 +26,7 @@ defmodule LedgerApp.MixProject do
   def deps do
   [
     {:ex_doc, "~> 0.34", only: :dev, runtime: false, warn_if_outdated: true},
+    {:csv, "~> 2.4" }
   ]
   end
 
@@ -36,9 +37,4 @@ defmodule LedgerApp.MixProject do
     ]
   end
 
-  defp aliases do
-    [
-
-    ]
-  end
 end

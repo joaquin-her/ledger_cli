@@ -1,0 +1,9 @@
+{application,ledger,
+             [{modules,['Elixir.Commands.Balance',
+                        'Elixir.Commands.Transacciones',
+                        'Elixir.Database.CSVDatabase','Elixir.LedgerApp']},
+              {optional_applications,[]},
+              {applications,[kernel,stdlib,elixir,logger,csv]},
+              {description,"ledger"},
+              {registered,[]},
+              {vsn,"0.1.0"}]}.
