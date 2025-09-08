@@ -10,7 +10,7 @@ defmodule LedgerApp do
     |> CSV.decode!([separator: ?;,headers: true])
     |> Enum.each(fn row ->
       row
-      |>IO.puts()
+      |> IO.inspect()
     end)
   end
 
