@@ -27,12 +27,7 @@ defmodule LedgerApp do
       end)
       |> Enum.to_list()
 
-    Enum.each(currencies, fn currency ->
-      print_currency(currency.moneda, currency.valor)
-    end)
+      currencies
   end
 
-  defp print_currency(name, value) do
-    IO.puts("#{name} : #{value} USD")
-  end
 end
