@@ -23,20 +23,31 @@ defmodule LedgerApp do
     transacciones
   end
 
-  def read_currencies(path) do
-    currencies =
-      path
-      |> File.stream!()
-      |> CSV.decode!(separator: ?;, headers: true)
-      |> Enum.map(fn row ->
-        %{
-          moneda: row["nombre_moneda"],
-          valor: row["precio_usd"]
-        }
-      end)
-      |> Enum.to_list()
-
-      currencies
+  def get_account(path, account_name) do
+    path
+    |> read_transactions()
+    |> get_account_transactions(account_name)
   end
+
+  def get_account_transactions(transactions, account_name) do
+    transactions
+    |> Enum.filter(fn transaction -> transaction.cuenta_origen == account_name end)
+  end
+
+
+  # defp read_currencies(path) do
+  #   currencies =
+  #     path
+  #     |> File.stream!()
+  #     |> CSV.decode!(separator: ?;, headers: true)
+  #     |> Enum.map(fn row ->
+  #       %{
+  #         moneda: row["nombre_moneda"],
+  #         valor: row["precio_usd"]
+  #       }
+  #     end)
+  #     |> Enum.to_list()
+  #     currencies
+  # end
 
 end
