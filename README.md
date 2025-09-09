@@ -1,7 +1,6 @@
 # LedgerApp
 
 **TODO: Add description**
-t1: generar .csv
 
 v1: mostrar todas las transacciones
 v2: mostrar todas las transacciones de una cuenta especifica usando c1 como flag
