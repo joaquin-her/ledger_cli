@@ -73,7 +73,11 @@ defmodule LedgerApp do
     end
   end
 
-  def get_account(path, account_name) do
+  def get_transactions(path, "all") do
+    read_transactions(path)
+  end
+
+  def get_transactions(path, account_name) do
     path
     |> read_transactions()
     |> get_account_transactions(account_name)
