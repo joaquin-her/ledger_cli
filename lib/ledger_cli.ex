@@ -11,10 +11,14 @@ defmodule LedgerApp do
     |> Enum.map(fn row ->
       %Transaccion{
         id: row["id_transaccion"] |> String.to_integer(),
-        cuenta_origen: row["cuenta_origen"],
         tipo: row["tipo"] |> String.to_atom(),
-        timestamp: row["timestamp"] |> String.to_integer(),
-      }
+        cuenta_origen: row["cuenta_origen"],
+        cuenta_destino: row["cuenta_destino"],
+        moneda_origen: row["moneda_origen"],
+        moneda_destino: row["moneda_destino"],
+        monto: row["monto"],
+        timestamp: row["timestamp"]
+     }
     end)
     transacciones
   end
