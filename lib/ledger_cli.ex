@@ -4,6 +4,23 @@ defmodule LedgerApp do
   """
 
   alias Transaccion
+  def run_command(args) do
+    parse_args(args)
+    # case config.command do
+    #   "transacciones" -> IO.puts("Comando transacciones llamado")
+    #   "balance" -> IO.puts("Comando balance llamado")
+    #   _ -> IO.puts("comando invalido")
+    # end
+  end
+
+  defp parse_args(args) do
+    "-command " <> args
+      |> String.split(" ")
+      |> OptionParser.parse(
+        [aliases: [command: :subcommand, c1: :cuenta_origen, t: :path_transacciones_data, c2: :cuenta_destino, o: :output_path ],
+        strict: [subcommand: :string, cuenta_origen: :string, path_transacciones_data: :string, cuenta_destino: :string, output_path: :string]])
+  end
+
   def read_transactions(path) do
     transacciones = path
     |> File.stream!()
