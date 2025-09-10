@@ -91,36 +91,36 @@ defmodule LedgerApp do
   end
 
   def write_transactions(transactions, output_path) do
-    try  do
-      content =
+    case output_path do
+      "console" ->
         transactions
-        |> Enum.map(fn t ->
-          %{
-            id_transaccion: t.id,
-            tipo: t.tipo,
-            cuenta_origen: t.cuenta_origen,
-            cuenta_destino: t.cuenta_destino,
-            moneda_origen: t.moneda_origen,
-            moneda_destino: t.moneda_destino,
-            monto: t.monto,
-            timestamp: t.timestamp
-          }
-        end)
-        |> CSV.encode(headers: true)
-        |> Enum.join()
-      case File.write(output_path, content) do
-        :ok ->
-          IO.puts("Transacciones guardadas en: #{output_path}")
-          :ok
-        {:error, reason} ->
-          IO.puts("Error al guardar las transacciones: #{reason}")
-          {:error, reason}
-      end
-    rescue
-      e in File.Error ->
-        IO.puts("Error al escribir el archivo: #{e.reason}")
-        {:error, e.reason}
+        |> Enum.each(&IO.inspect/1)
+      _ ->
+        case File.write(output_path, encode_transactions(transactions)) do
+          :ok -> IO.puts("Transacciones guardadas en: #{output_path}")
+          {:error, reason} ->
+            IO.puts("Error al guardar las transacciones: #{reason}")
+            {:error, reason}
+        end
     end
+  end
+
+  def encode_transactions(transactions) do
+    transactions
+    |> Enum.map(fn t ->
+      %{
+        id_transaccion: t.id,
+        tipo: t.tipo,
+        cuenta_origen: t.cuenta_origen,
+        cuenta_destino: t.cuenta_destino,
+        moneda_origen: t.moneda_origen,
+        moneda_destino: t.moneda_destino,
+        monto: t.monto,
+        timestamp: t.timestamp
+      }
+    end)
+    |> CSV.encode(headers: true)
+    |> Enum.join()
   end
 
   def get_transactions(path, "all") do
