@@ -6,13 +6,15 @@ defmodule LedgerApp do
   alias Transaccion
   def run_command(args) do
     {status, config} = parse_args(args)
-    # case {status, config} do
-    #   {:ok, arguments} ->
-    #     case arguments.subcommand do
-    #       "transactions" -> get_account_transactions(arguments.path_transacciones_data, arguments.cuenta_origen)
-    #       _ -> IO.puts("Comando no reconocido")
-    #     end
-    # end
+    case {status, config} do
+      {:ok, arguments} ->
+        case arguments.subcommand do
+          "transacciones" ->
+            get_transactions(arguments.path_transacciones_data, arguments.cuenta_origen)
+            |> write_transactions(arguments.output_path)
+          _ -> IO.puts("Comando no reconocido")
+        end
+    end
   end
 
   defp parse_args(args) do
