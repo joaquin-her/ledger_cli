@@ -87,7 +87,7 @@ defmodule LedgerApp do
     transacciones
   end
 
-  def write_transactions(output_path, transactions) do
+  def write_transactions(transactions, output_path) do
     try  do
       content =
         transactions
