@@ -4,13 +4,15 @@ defmodule LedgerApp do
   """
 
   alias Database.CSV_Database
+  alias Commands.TransactionsCommand
   def run_command(args) do
     {status, config} = parse_args(args)
     case {status, config} do
       {:ok, arguments} ->
         case arguments.subcommand do
           "transacciones" ->
-            CSV_Database.get_transactions(arguments.path_transacciones_data, arguments.cuenta_origen)
+            CSV_Database.get_transactions(arguments.path_transacciones_data)
+            |> TransactionsCommand.filter(arguments)
             |> CSV_Database.write_transactions(arguments.output_path)
           _ -> IO.puts("Comando no reconocido")
         end
