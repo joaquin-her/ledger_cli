@@ -33,7 +33,23 @@ defmodule LedgerApp do
           output_path: :string
         ]
       )
-  end
+    case {options, remaining_args, errors} do
+      {opts, [], []} ->
+        {:ok, opts}
+
+      {_opts, remaining, []} ->
+        remaining
+        |> Enum.join(", ")
+        |> then(fn msg -> {:error, "Argumentos no reconocidos: #{msg}"} end)
+
+
+      {_opts, _remaining, errors} ->
+        errors
+        |> Enum.map(fn {key, val} -> "#{key}: #{val}" end)
+        |> Enum.join(", ")
+        |> then(fn msg -> {:error, "Errores: #{msg}"} end)
+      end
+    end
 
   def read_transactions(path) do
     transacciones = path
