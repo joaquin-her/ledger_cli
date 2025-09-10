@@ -5,11 +5,13 @@ defmodule LedgerApp do
 
   alias Transaccion
   def run_command(args) do
-    parse_args(args)
-    # case config.command do
-    #   "transacciones" -> IO.puts("Comando transacciones llamado")
-    #   "balance" -> IO.puts("Comando balance llamado")
-    #   _ -> IO.puts("comando invalido")
+    {status, config} = parse_args(args)
+    # case {status, config} do
+    #   {:ok, arguments} ->
+    #     case arguments.subcommand do
+    #       "transactions" -> get_account_transactions(arguments.path_transacciones_data, arguments.cuenta_origen)
+    #       _ -> IO.puts("Comando no reconocido")
+    #     end
     # end
   end
 
@@ -35,6 +37,9 @@ defmodule LedgerApp do
       )
     case {options, remaining_args, errors} do
       {opts, [], []} ->
+        opts =
+          default_args()
+          |> Map.merge(Map.new(opts))
         {:ok, opts}
 
       {_opts, remaining, []} ->
@@ -50,6 +55,16 @@ defmodule LedgerApp do
         |> then(fn msg -> {:error, "Errores: #{msg}"} end)
       end
     end
+
+  defp default_args() do
+    %{
+      subcommand: "transacciones",
+      cuenta_origen: "all",
+      path_transacciones_data: "transacciones.csv",
+      cuenta_destino: "",
+      output_path: "out.csv"
+    }
+  end
 
   def read_transactions(path) do
     transacciones = path
