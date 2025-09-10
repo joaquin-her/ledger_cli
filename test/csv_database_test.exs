@@ -1,5 +1,6 @@
-defmodule Ledger.TransactionsTests do
+defmodule Ledger.CSV_Database_Tests do
   use ExUnit.Case
+  alias Database.CSV_Database
 
   describe "ledger_transacciones/n" do
     alias TestDataGenerator
@@ -56,22 +57,8 @@ defmodule Ledger.TransactionsTests do
     cuenta_destino: "userG",
     tipo: :swap
   }]
-    assert transactions = LedgerApp.get_transactions("test_data.csv", "all")
+    assert transactions == CSV_Database.get_transactions("test_data.csv")
     end
-  end
-  test "get userA account transactions" do
-    userA_transactions = [
-      %Transaccion{
-    id: 1,
-    timestamp: "1754937004",
-    moneda_origen: "USDT",
-    moneda_destino: "USDT",
-    monto: "100.50",
-    cuenta_origen: "userA",
-    cuenta_destino: "userB",
-    tipo: :transferencia
-  }]
-  assert userA_transactions = LedgerApp.get_transactions("test_data.csv", "userA")
   end
 
 

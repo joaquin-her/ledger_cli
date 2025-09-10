@@ -22,18 +22,8 @@ defmodule Database.CSV_Database do
     transacciones
   end
 
-  def get_account_transactions(transactions, account_name) do
-    transactions
-    |> Enum.filter(fn transaction -> transaction.cuenta_origen == account_name end)
-  end
-  def get_transactions(path, "all") do
+  def get_transactions(path) do
     read_transactions(path)
-  end
-
-  def get_transactions(path, account_name) do
-    path
-    |> read_transactions()
-    |> get_account_transactions(account_name)
   end
 
   def encode_transactions(transactions) do
