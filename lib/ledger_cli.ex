@@ -15,11 +15,11 @@ defmodule LedgerApp do
 
   defp parse_args(args) do
     {options, remaining_args, errors} =
-      "-command " <> args
+      "-c " <> args
       |> String.split(" ")
       |> OptionParser.parse(
         aliases: [
-          command: :subcommand,
+          c: :subcommand,
           c1: :cuenta_origen,
           t: :path_transacciones_data,
           c2: :cuenta_destino,
