@@ -27,14 +27,16 @@ defmodule LedgerApp do
           c1: :cuenta_origen,
           t: :path_transacciones_data,
           c2: :cuenta_destino,
-          o: :output_path
+          o: :output_path,
+          m: :moneda
         ],
         strict: [
           subcommand: :string,
           cuenta_origen: :string,
           path_transacciones_data: :string,
           cuenta_destino: :string,
-          output_path: :string
+          output_path: :string,
+          moneda: :string
         ]
       )
     case {options, remaining_args, errors} do
@@ -63,8 +65,9 @@ defmodule LedgerApp do
       subcommand: "transacciones",
       cuenta_origen: "all",
       path_transacciones_data: "transacciones.csv",
-      cuenta_destino: "",
-      output_path: "out.csv"
+      cuenta_destino: "all",
+      output_path: "console",
+      moneda: "USD",
     }
   end
 
