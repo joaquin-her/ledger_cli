@@ -11,12 +11,26 @@ defmodule LedgerApp.CLI do
     case {status, config} do
       {:ok, arguments} ->
         case arguments.subcommand do
+          "balance" ->
+            handle_balance(arguments)
           "transacciones" ->
             CSV_Database.get_transactions(arguments.path_transacciones_data)
             |> TransactionsCommand.filter(arguments)
             |> CSV_Database.write_transactions(arguments.output_path)
           _ -> IO.puts("Comando no reconocido")
         end
+    end
+  end
+
+  defp handle_balance(args) do
+    case args.cuenta_origen do
+      "all" ->
+        IO.puts("Debe especificar una cuenta origen con -c1")
+        # throw an exception
+      _ ->
+        CSV_Database.get_transactions(args.path_transacciones_data)
+        |> BalanceCommand.get_balance(args)
+        |> CSV_Database.write_transactions(args.output_path)
     end
   end
 
@@ -70,7 +84,7 @@ defmodule LedgerApp.CLI do
       path_transacciones_data: "transacciones.csv",
       cuenta_destino: "all",
       output_path: "console",
-      moneda: "USD",
+      moneda: "all",
     }
   end
 
