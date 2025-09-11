@@ -1,4 +1,4 @@
-defmodule LedgerApp do
+defmodule LedgerApp.CLI do
   @moduledoc """
   Documentation for `LedgerApp`.
   """
