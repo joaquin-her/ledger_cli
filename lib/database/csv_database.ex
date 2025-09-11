@@ -31,24 +31,32 @@ defmodule Database.CSV_Database do
     |> Enum.map(fn t ->
       %{
         id_transaccion: t.id,
-        tipo: t.tipo,
-        cuenta_origen: t.cuenta_origen,
-        cuenta_destino: t.cuenta_destino,
+        timestamp: t.timestamp,
         moneda_origen: t.moneda_origen,
         moneda_destino: t.moneda_destino,
+        cuenta_origen: t.cuenta_origen,
+        cuenta_destino: t.cuenta_destino,
         monto: t.monto,
-        timestamp: t.timestamp
+        tipo: t.tipo,
       }
     end)
     |> CSV.encode(headers: true)
     |> Enum.join()
   end
-
+  defp console_log(transaction) do
+    transaction
+    |> IO.puts()
+  end
+  defp print_transactions_header() do
+    "ID | TIMESTAMP | MONEDA_ORIGEN | MONEDA_DESTINO | MONTO | CUENTA_ORIGEN | CUENTA_DESTINO | TIPO"
+    |> IO.puts()
+  end
   def write_transactions(transactions, output_path) do
     case output_path do
       "console" ->
+        print_transactions_header()
         transactions
-        |> Enum.each(&IO.inspect/1)
+        |> Enum.each(fn t -> console_log(t) end)
       _ ->
         case File.write(output_path, encode_transactions(transactions)) do
           :ok -> IO.puts("Transacciones guardadas en: #{output_path}")
@@ -58,6 +66,7 @@ defmodule Database.CSV_Database do
         end
     end
   end
+
 # defp read_currencies(path) do
   #   currencies =
   #     path
