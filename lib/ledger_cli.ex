@@ -3,6 +3,7 @@ defmodule LedgerApp.CLI do
   Documentation for `LedgerApp`.
   """
 
+  alias Commands.BalanceCommand
   alias Database.CSV_Database
   alias Commands.TransactionsCommand
   def run_command(args) do
