@@ -3,12 +3,20 @@
 **TODO: Add description**
 
 - Transacciones:
-v1: mostrar todas las transacciones
-v2: mostrar todas las transacciones de una cuenta especifica usando c1 como flag
+[x] v1: mostrar todas las transacciones
+[x] v2: mostrar todas las transacciones de una cuenta especifica usando c1 como flag
     2.1: implementar flag
-v3: mostrar todas las transacciones de una cuenta especifica usando c1 como flag imprimiendolas en un archivo .csv
+[x] v3: mostrar todas las transacciones de una cuenta especifica usando c1 como flag imprimiendolas en un archivo .csv
     3.1: implementar flag
 
+
+[x] bug: faltan valores por defecto para los siguientes parametros: [cuenta destino, moneda, output consola]
+
+- Balance:
+[ ] Hacer necesario el flag -c1
+[ ] Obtener el balance de la cuenta dada la moneda en -m
+[ ] Formatear el resultado
+[ ] 
 
 
 Documentation can be generated with [ExDoc](https://github.com/elixir-lang/ex_doc)
