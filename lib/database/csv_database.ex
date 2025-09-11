@@ -30,14 +30,14 @@ defmodule Database.CSV_Database do
     transactions
     |> Enum.map(fn t ->
       %{
-        id_transaccion: t.id,
+        id_transaccion: String.to_atom(t.id),
         timestamp: t.timestamp,
-        moneda_origen: t.moneda_origen,
-        moneda_destino: t.moneda_destino,
-        cuenta_origen: t.cuenta_origen,
-        cuenta_destino: t.cuenta_destino,
-        monto: t.monto,
-        tipo: t.tipo,
+        moneda_origen: String.to_atom(t.moneda_origen),
+        moneda_destino: String.to_atom(t.moneda_destino),
+        cuenta_origen: String.to_atom(t.cuenta_origen),
+        cuenta_destino: String.to_atom(t.cuenta_destino),
+        monto: String.to_float(t.monto),
+        tipo: String.to_atom(t.tipo),
       }
     end)
     |> CSV.encode(headers: true)
@@ -67,19 +67,12 @@ defmodule Database.CSV_Database do
     end
   end
 
-# defp read_currencies(path) do
-  #   currencies =
-  #     path
-  #     |> File.stream!()
-  #     |> CSV.decode!(separator: ?;, headers: true)
-  #     |> Enum.map(fn row ->
-  #       %{
-  #         moneda: row["nombre_moneda"],
-  #         valor: row["precio_usd"]
-  #       }
-  #     end)
-  #     |> Enum.to_list()
-  #     currencies
-  # end
-
+def get_currencies(path) do
+  path
+  |> File.stream!()
+  |> CSV.decode!(separator: ?;, headers: true)
+  |> Enum.reduce( %{} ,fn row, currencies ->
+    Map.put(currencies, row["nombre_moneda"], row["precio_usd"] |> String.to_float())
+    end)
+ end
 end
