@@ -19,6 +19,12 @@
 [ ] 
 
 
+### Errores generados/atrapados:
+- una cuenta debe ser primero dada de alta antes de poder comenzar a transferirsele. Caso contrario la informacion seria inconsistente
+- una cuenta no puede ser dada de alta multiples veces. Caso contrario la informacion seria inconsistente
+- una cuenta debe hacer un swap de las monedas que contiene en su cuenta para poder transferir en otra moneda, previamente a realizar la transferencia (debe disponer de la cantidad de la moneda a transferir en la billetera antes de poder realizar la transferencia)
+
+
 Documentation can be generated with [ExDoc](https://github.com/elixir-lang/ex_doc)
 and published on [HexDocs](https://hexdocs.pm). Once published, the docs can
 be found at <https://hexdocs.pm/ledger_app>.
