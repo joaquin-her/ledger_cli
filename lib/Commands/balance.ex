@@ -5,7 +5,12 @@ defmodule Commands.BalanceCommand do
   alias Database.CSV_Database
   alias Commands.TransactionsCommand
 
+  @doc """
+  La funcion recibe el historial de las transacciones de una cuenta incluyendo su alta de cuenta, las transacciones que realizó y realizaron hacia ella, y los swaps que haya hehco
+  Devuelve un mapa con el balance de las monedas de las que dispone luego de todas sus transacciones
+  """
   def get_balance(transactions, arguments) do
+    Enum.sort_by(transactions, fn t -> t.timestamp end)
     cond do
       Map.get(Enum.at(transactions, 0), :tipo) == :alta_cuenta ->
         _get_balance(transactions, arguments)
