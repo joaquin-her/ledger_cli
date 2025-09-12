@@ -6,6 +6,15 @@ defmodule Commands.BalanceCommand do
   alias Commands.TransactionsCommand
 
   def get_balance(transactions, arguments) do
+    cond do
+      Map.get(Enum.at(transactions, 0), :tipo) == :alta_cuenta ->
+        _get_balance(transactions, arguments)
+      false ->
+        "la cuenta solicitada no fue dada de alta"
+    end
+  end
+
+  defp _get_balance(transactions, arguments) do
     case arguments.moneda do
       "all" ->
         # conversion_map = CSV_Database.get_currencies(arguments.path_currencies_data)
@@ -25,13 +34,22 @@ defmodule Commands.BalanceCommand do
                 IO.puts("no es transferencia")
                 balance
             end
-            end)
+          end)
         transactions
         |> TransactionsCommand.filter_by_destiny_account(arguments.cuenta_origen)
         |> Enum.reduce( balance, fn t, balance ->
           balance
           |> Map.update( String.to_atom(t.moneda_origen), String.to_float(t.monto), fn value -> value + String.to_float(t.monto) end )
           end)
+      _ ->
+        IO.puts("Se imprime el balance de la cuenta convertuda a la moneda especificada")
+
+#      Enum.empty?(balance) ->
+#        {:error, "Cuenta no existe"}
+      
+    end
+  end
+    
         #   |> Enum.each(fn t ->
         #   case {t.tipo, t.moneda_origen, t.modena_destino, t.monto} do
         #     {"transferencia", moneda_origen, _, monto} ->
@@ -48,9 +66,6 @@ defmodule Commands.BalanceCommand do
         #   end
         # end)
         # devuelve un mapa de clave: valor con la suma de los valores que coincidian
-      _ ->
-        IO.puts("Se imprime el balance de la cuenta convertuda a la moneda especificada")
-    end
-  end
+
 
 end
