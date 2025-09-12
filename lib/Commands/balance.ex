@@ -8,7 +8,6 @@ defmodule Commands.BalanceCommand do
   def get_balance(transactions, arguments) do
     case arguments.moneda do
       "all" ->
-        _ = IO.puts("Se imprime el balance de la cuenta en todas las monedas de las que dispone")
         # conversion_map = CSV_Database.get_currencies(arguments.path_currencies_data)
         balance =
           # las filtra por tipo de transaccion y hace cuentas distintas
@@ -19,12 +18,14 @@ defmodule Commands.BalanceCommand do
               :transferencia ->
                 balance
                 |> Map.update( String.to_atom(transaction.moneda_origen), String.to_float(transaction.monto) * -1 ,fn value -> value - String.to_float(transaction.monto) end )
+              :alta_cuenta ->
+                balance
+                |> Map.update( String.to_atom(transaction.moneda_origen), String.to_float(transaction.monto) ,fn value ->String.to_float(transaction.monto) end )
               _ ->
                 IO.puts("no es transferencia")
                 balance
             end
             end)
-        IO.inspect(balance)
         transactions
         |> TransactionsCommand.filter_by_destiny_account(arguments.cuenta_origen)
         |> Enum.reduce( balance, fn t, balance ->
