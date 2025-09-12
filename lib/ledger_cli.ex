@@ -29,6 +29,7 @@ defmodule LedgerApp.CLI do
         # throw an exception
       _ ->
         CSV_Database.get_transactions(args.path_transacciones_data)
+        |> TransactionsCommand.get_transactions_of_account(args.cuenta_origen)
         |> BalanceCommand.get_balance(args)
         |> IO.inspect()
         #|> CSV_Database.write_transactions(args.output_path)
