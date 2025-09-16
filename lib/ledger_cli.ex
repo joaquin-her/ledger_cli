@@ -37,12 +37,12 @@ defmodule LedgerApp.CLI do
   end
 
   defp parse_args(args) do
+    [command | arguments] = args
+        |> String.split(" ")
     {options, remaining_args, errors} =
-      "-c " <> args
-      |> String.split(" ")
+      arguments
       |> OptionParser.parse(
         aliases: [
-          c: :subcommand,
           c1: :cuenta_origen,
           t: :path_transacciones_data,
           c2: :cuenta_destino,
@@ -63,6 +63,7 @@ defmodule LedgerApp.CLI do
         opts =
           default_args()
           |> Map.merge(Map.new(opts))
+          |> Map.put(:subcommand, command)
         {:ok, opts}
 
       {_opts, remaining, []} ->
