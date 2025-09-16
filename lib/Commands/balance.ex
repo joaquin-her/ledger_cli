@@ -2,7 +2,6 @@ defmodule Commands.BalanceCommand do
   @moduledoc """
   Subcomando para calcular balances
   """
-  alias Database.CSV_Database
   alias Commands.TransactionsCommand
 
   @doc """
@@ -10,7 +9,6 @@ defmodule Commands.BalanceCommand do
   Devuelve un mapa con el balance de las monedas de las que dispone luego de todas sus transacciones
   """
   def get_balance(transactions, arguments, conversion_map) do
-    IO.inspect(conversion_map, label: "Conversion map")
     Enum.sort_by(transactions, fn t -> t.timestamp end)
     cond do
       Map.get(Enum.at(transactions, 0), :tipo) == :alta_cuenta ->
