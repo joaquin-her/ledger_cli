@@ -8,7 +8,7 @@
     2.1: implementar flag
 [x] v3: mostrar todas las transacciones de una cuenta especifica usando c1 como flag imprimiendolas en un archivo .csv
     3.1: implementar flag
-
+[ ] Hacer pattern matching con el subcommand en vez de agregar un string
 
 [x] bug: faltan valores por defecto para los siguientes parametros: [cuenta destino, moneda, output consola]
 
