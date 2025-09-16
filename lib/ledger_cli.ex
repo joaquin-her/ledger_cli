@@ -25,7 +25,7 @@ defmodule LedgerApp.CLI do
   defp handle_balance(args) do
     case args.cuenta_origen do
       "all" ->
-        IO.puts("Debe especificar una cuenta origen con -c1")
+        IO.puts("Error: Debe especificar una cuenta origen con -c1")
         # throw an exception
       _ ->
         CSV_Database.get_transactions(args.path_transacciones_data)
