@@ -14,4 +14,11 @@ defmodule CliTest do
       LedgerApp.CLI.run_command("transacciones -t test_data.csv")
     end)
   end
+
+  test "usar el comando balance sin el flag -c1 debe arrojar un error" do
+    expected_output = "Error: Debe especificar una cuenta origen con -c1\n"
+    assert expected_output == capture_io(fn ->
+      LedgerApp.CLI.run_command("balance -t test_data.csv")
+    end)
+  end
 end
