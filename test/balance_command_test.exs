@@ -62,4 +62,14 @@ defmodule BalanceCommandTests do
     ]
     assert { :error, 2} == BalanceCommand.get_balance(transactions, %{cuenta_origen: "userA", moneda: "all"})
   end
+
+  test "un swap es convertido correctamente " do
+    transactions = [
+      %Transaccion{id: 1, timestamp: "1754937004", moneda_origen: "USDT", moneda_destino: "", monto: "5000.0", cuenta_origen: "userA", cuenta_destino: "", tipo: :alta_cuenta},
+      %Transaccion{id: 2, timestamp: "1754937024", moneda_origen: "USDT", moneda_destino: "ETH", monto: "5000.0", cuenta_origen: "userA", cuenta_destino: "", tipo: :swap},
+    ]
+    conversion_values = %{"BTC": 67500.00, "ETH": 4100.00, "USDT": 1.00}
+    assert %{ USDT: 0.0, ETH: 1.2195121951219512195121951219512 } == BalanceCommand.get_balance(transactions, %{cuenta_origen: "userA", moneda: "all", conversion_map: conversion_values})
+  end
+
 end
