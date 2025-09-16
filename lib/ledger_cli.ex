@@ -28,9 +28,10 @@ defmodule LedgerApp.CLI do
         IO.puts("Error: Debe especificar una cuenta origen con -c1")
         # throw an exception
       _ ->
+        conversion_map = CSV_Database.get_currencies(args.path_currencies_data)
         CSV_Database.get_transactions(args.path_transacciones_data)
         |> TransactionsCommand.get_transactions_of_account(args.cuenta_origen)
-        |> BalanceCommand.get_balance(args)
+        |> BalanceCommand.get_balance(args, conversion_map)
         |> IO.inspect()
         #|> CSV_Database.write_transactions(args.output_path)
     end
@@ -85,7 +86,7 @@ defmodule LedgerApp.CLI do
       subcommand: "transacciones",
       cuenta_origen: "all",
       path_transacciones_data: "transacciones.csv",
-      parh_currencies_data: "monedas.csv",
+      path_currencies_data: "monedas.csv",
       cuenta_destino: "all",
       output_path: "console",
       moneda: "all",

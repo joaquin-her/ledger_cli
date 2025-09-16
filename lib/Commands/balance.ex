@@ -9,20 +9,20 @@ defmodule Commands.BalanceCommand do
   La funcion recibe el historial de las transacciones de una cuenta incluyendo su alta de cuenta, las transacciones que realizó y realizaron hacia ella, y los swaps que haya hehco
   Devuelve un mapa con el balance de las monedas de las que dispone luego de todas sus transacciones
   """
-  def get_balance(transactions, arguments) do
+  def get_balance(transactions, arguments, conversion_map) do
+    IO.inspect(conversion_map, label: "Conversion map")
     Enum.sort_by(transactions, fn t -> t.timestamp end)
     cond do
       Map.get(Enum.at(transactions, 0), :tipo) == :alta_cuenta ->
-        _get_balance(transactions, arguments)
+        _get_balance(transactions, arguments, conversion_map)
       false ->
         "la cuenta solicitada no fue dada de alta"
     end
   end
 
-  defp _get_balance(transactions, arguments) do
+  defp _get_balance(transactions, arguments, conversion_map) do
     case arguments.moneda do
       "all" ->
-        # conversion_map = CSV_Database.get_currencies(arguments.path_currencies_data)
         balance =
           # las filtra por tipo de transaccion y hace cuentas distintas
           transactions
@@ -35,6 +35,9 @@ defmodule Commands.BalanceCommand do
               :alta_cuenta ->
                 balance
                 |> Map.update( String.to_atom(transaction.moneda_origen), String.to_float(transaction.monto) ,fn value ->String.to_float(transaction.monto) end )
+              :swap ->
+                balance
+                |> apply_swap( transaction, conversion_map)
               _ ->
                 IO.puts("no es transferencia")
                 balance
@@ -48,13 +51,24 @@ defmodule Commands.BalanceCommand do
           end)
       _ ->
         IO.puts("Se imprime el balance de la cuenta convertuda a la moneda especificada")
-
 #      Enum.empty?(balance) ->
 #        {:error, "Cuenta no existe"}
-      
     end
   end
-    
+
+  defp apply_swap(balance, transaction, conversion_map) do
+    case {Map.has_key?(conversion_map, transaction.moneda_origen), Map.has_key?(conversion_map, transaction.moneda_destino)} do
+      {true, true} ->
+        origen_to_usd = String.to_float(transaction.monto) * conversion_map[transaction.moneda_origen]
+        destino_from_usd = origen_to_usd / conversion_map[transaction.moneda_destino]
+        balance
+        |> Map.update( String.to_atom(transaction.moneda_origen), String.to_float(transaction.monto) * -1 ,fn value -> value - String.to_float(transaction.monto) end )
+        |> Map.update( String.to_atom(transaction.moneda_destino), destino_from_usd ,fn value -> value + destino_from_usd end )
+      _ ->
+        {:error, transaction.id}
+        balance
+    end
+  end
         #   |> Enum.each(fn t ->
         #   case {t.tipo, t.moneda_origen, t.modena_destino, t.monto} do
         #     {"transferencia", moneda_origen, _, monto} ->
