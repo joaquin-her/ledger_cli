@@ -48,13 +48,6 @@ defmodule BalanceCommandTests do
     conversion_values = %{}
     assert %{BTC: 2700.9998786 } == BalanceCommand.get_balance(transactions, %{cuenta_origen: "userB", moneda: "all"}, conversion_values)
   end
-  test "no tener como objetivo una cuenta especifica debe arrojar una excepcion" do
-      assert true
-  end
-
-  test "si la cuenta buscada no esta dentro de los datos debe devolver un :error y la causa de por que es un error" do
-      assert true
-  end
 
 
   test "la aparicion de varias alta_cuenta de una misma cuenta debe arrojar un error con la linea donde fue encontrado" do
@@ -77,4 +70,25 @@ defmodule BalanceCommandTests do
     assert %{ USDT: 0.0, ETH: 2.0 } == BalanceCommand.get_balance(transactions, %{cuenta_origen: "userA", moneda: "all"}, conversion_values)
   end
 
+  test "un swap con un monto mayor al disponible arroja un error " do
+    transactions = [
+      %Transaccion{id: 1, timestamp: "1754937004", moneda_origen: "USDT", moneda_destino: "", monto: "5000.0", cuenta_origen: "userA", cuenta_destino: "", tipo: :alta_cuenta},
+      %Transaccion{id: 2, timestamp: "1754937024", moneda_origen: "USDT", moneda_destino: "ETH", monto: "5020.0", cuenta_origen: "userA", cuenta_destino: "", tipo: :swap},
+    ]
+    conversion_values = %{"BTC" => 67500.00, "ETH" => 2500.00, "USDT" => 1.00}
+    assert { :error, 2} == BalanceCommand.get_balance(transactions, %{cuenta_origen: "userA", moneda: "all"}, conversion_values)
+  end
+
+  test "el balance con una moneda dentro de los valores de conversion en especifico se calcula correctamente" do
+    transactions = [
+      %Transaccion{id: 1, timestamp: "1754937001", moneda_origen: "BTC", moneda_destino: "", monto: "5000.0", cuenta_origen: "userA", cuenta_destino: "", tipo: :alta_cuenta},
+      %Transaccion{id: 2, timestamp: "1754937002", moneda_origen: "BTC", moneda_destino: "", monto: "500.0", cuenta_origen: "userB", cuenta_destino: "", tipo: :alta_cuenta},
+      %Transaccion{id: 3, timestamp: "1754937003", moneda_origen: "BTC", moneda_destino: "", monto: "1000.0", cuenta_origen: "userA", cuenta_destino: "userB", tipo: :transferencia},
+      %Transaccion{id: 4, timestamp: "1755541804", moneda_origen: "BTC", moneda_destino: "", monto: "1.0", cuenta_origen: "userA", cuenta_destino: "userB", tipo: :transferencia},
+      %Transaccion{id: 5, timestamp: "1745541805", moneda_origen: "BTC", moneda_destino: "", monto: "1200.0", cuenta_origen: "userA", cuenta_destino: "userB", tipo: :transferencia},
+      %Transaccion{id: 4, timestamp: "1745541806", moneda_origen: "BTC", moneda_destino: "", monto: "0.0001214", cuenta_origen: "userB", cuenta_destino: "userA", tipo: :transferencia}
+    ]
+    conversion_values = %{"BTC" => 30000.00, "ETH" => 2500.00, "USDT" => 1.00}
+    assert %{USDT: 81029996.358 } == BalanceCommand.get_balance(transactions, %{cuenta_origen: "userB", moneda: "USDT"}, conversion_values)
+  end
 end

@@ -21,4 +21,13 @@ defmodule CliTest do
       LedgerApp.CLI.run_command("balance -t test_data.csv")
     end)
   end
+
+  test "no tener como objetivo una cuenta especifica debe arrojar una excepcion" do
+      assert true
+  end
+
+  test "si la cuenta buscada no esta dentro de los datos debe devolver un :error y la causa de por que es un error" do
+      assert true
+  end
+
 end
