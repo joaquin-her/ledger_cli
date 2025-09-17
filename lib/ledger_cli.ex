@@ -6,6 +6,12 @@ defmodule LedgerApp.CLI do
   alias Commands.BalanceCommand
   alias Database.CSV_Database
   alias Commands.TransactionsCommand
+
+  def main(args) do
+    Enum.at(args,0)
+    |> run_command()
+  end
+
   def run_command(args) do
     {status, config} = parse_args(args)
     case {status, config} do
