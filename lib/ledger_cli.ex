@@ -8,7 +8,6 @@ defmodule LedgerApp.CLI do
   alias Commands.TransactionsCommand
 
   def main(args) do
-    IO.inspect(args)
     run_command(args)
   end
 
@@ -16,7 +15,6 @@ defmodule LedgerApp.CLI do
     {status, config} = parse_args(args)
     case {status, config} do
       {:ok, arguments} ->
-        IO.inspect(arguments)
         case arguments.subcommand do
           "balance" ->
             handle_balance(arguments)
