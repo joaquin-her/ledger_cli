@@ -8,21 +8,23 @@
     2.1: implementar flag
 [x] v3: mostrar todas las transacciones de una cuenta especifica usando c1 como flag imprimiendolas en un archivo .csv
     3.1: implementar flag
-[ ] Hacer pattern matching con el subcommand en vez de agregar un string
+[x] Hacer pattern matching con el subcommand en vez de agregar un string
 
 [x] bug: faltan valores por defecto para los siguientes parametros: [cuenta destino, moneda, output consola]
 
 - Balance:
-[ ] Hacer necesario el flag -c1
-[ ] Obtener el balance de la cuenta dada la moneda en -m
-[ ] Formatear el resultado
-[ ] 
+[x] Hacer necesario el flag -c1
+[x] Obtener el balance de la cuenta dada la moneda en -m
+[x] Formatear el resultado
+[ ] Testear manualmente con el ./ledger
+[ ] Crear mas casos de pruebas para los distintos modulos
+[ ] Reordenar el codigo en modulos y funciones mas responsablemente
 
 
 ### Errores generados/atrapados:
 - una cuenta debe ser primero dada de alta antes de poder comenzar a transferirsele. Caso contrario la informacion seria inconsistente
-- una cuenta no puede ser dada de alta multiples veces. Caso contrario la informacion seria inconsistente
-- una cuenta debe hacer un swap de las monedas que contiene en su cuenta para poder transferir en otra moneda, previamente a realizar la transferencia (debe disponer de la cantidad de la moneda a transferir en la billetera antes de poder realizar la transferencia)
+- el valor de los balances cuando superan las 6 decimales se redondean en esta cifra, no se truncan
+- los usuarios pueden tener valores negativos en su balances a modo de "deudas"
 
 
 Documentation can be generated with [ExDoc](https://github.com/elixir-lang/ex_doc)
