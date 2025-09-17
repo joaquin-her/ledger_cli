@@ -101,4 +101,24 @@ defmodule BalanceCommandTests do
     conversion_values = %{"BTC" => 30000.00, "ETH" => 2500.00, "USDT" => 1.00}
     assert { :error, "Moneda no encontrada en la lista de conversiones"} == BalanceCommand.get_balance(transactions, %{cuenta_origen: "userB", moneda: "DOGE"}, conversion_values)
   end
+
+  test "el balance con transacciones de varias monedas convierte correctamente a la moneda especificada" do
+    transactions = [
+      %Transaccion{id: 1, timestamp: "1754937001", moneda_origen: "BTC", moneda_destino: "", monto: 5000.0, cuenta_origen: "userA", cuenta_destino: "", tipo: :alta_cuenta},
+      %Transaccion{id: 2, timestamp: "1754937002", moneda_origen: "USDT", moneda_destino: "", monto: 500.0, cuenta_origen: "userB", cuenta_destino: "", tipo: :alta_cuenta},
+      %Transaccion{id: 3, timestamp: "1754937003", moneda_origen: "BTC", moneda_destino: "", monto: 1000.0, cuenta_origen: "userA", cuenta_destino: "userB", tipo: :transferencia},
+      %Transaccion{id: 4, timestamp: "1755541804", moneda_origen: "BTC", moneda_destino: "", monto: 1.0, cuenta_origen: "userA", cuenta_destino: "userC", tipo: :transferencia},
+      %Transaccion{id: 5, timestamp: "1745541805", moneda_origen: "ETH", moneda_destino: "", monto: 200.0, cuenta_origen: "userC", cuenta_destino: "userB", tipo: :transferencia},
+      %Transaccion{id: 6, timestamp: "1745541806", moneda_origen: "DOGE", moneda_destino: "", monto: 1200.0, cuenta_origen: "userB", cuenta_destino: "", tipo: :alta_cuenta}
+    ]
+    conversion_values = %{"BTC" => 30000.00, "ETH" => 2500.00, "USDT" => 1.00, "DOGE" => 5.062}
+    # 1000 btc = 30_000_000 usdt
+    # 200 eth = 500_000 usdt
+    # 500 usdt = 500 usdt
+    # 1200 doge = 1012.4 usdt
+    # total = 30_501_512.4 usdt
+    # convertido a doge = 30_501_512.4 / 5.062 = 6_026_585.2232319 doge
+    # redondeado a 6 decimales = 6_026_585.223232 doge
+    assert { :ok, %{DOGE: 6026585.223232 }} == BalanceCommand.get_balance(transactions, %{cuenta_origen: "userB", moneda: "DOGE"}, conversion_values)
+  end
 end
