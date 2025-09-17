@@ -46,7 +46,7 @@ defmodule BalanceCommandTests do
       %Transaccion{id: 4, timestamp: "1745541806", moneda_origen: "BTC", moneda_destino: "", monto: "0.0001214", cuenta_origen: "userB", cuenta_destino: "userA", tipo: :transferencia}
     ]
     conversion_values = %{}
-    assert %{ :ok,{BTC: 2700.9998786 }} == BalanceCommand.get_balance(transactions, %{cuenta_origen: "userB", moneda: "all"}, conversion_values)
+    assert { :ok, %{BTC: 2700.9998786 }} == BalanceCommand.get_balance(transactions, %{cuenta_origen: "userB", moneda: "all"}, conversion_values)
   end
 
 
@@ -90,5 +90,15 @@ defmodule BalanceCommandTests do
     ]
     conversion_values = %{"BTC" => 30000.00, "ETH" => 2500.00, "USDT" => 1.00}
     assert { :ok, %{USDT: 81029996.358 }} == BalanceCommand.get_balance(transactions, %{cuenta_origen: "userB", moneda: "USDT"}, conversion_values)
+  end
+
+  test "una moneda fuera del mapa de conversion devuelve un error" do
+    transactions = [
+      %Transaccion{id: 1, timestamp: "1754937001", moneda_origen: "BTC", moneda_destino: "", monto: "5000.0", cuenta_origen: "userA", cuenta_destino: "", tipo: :alta_cuenta},
+      %Transaccion{id: 2, timestamp: "1754937002", moneda_origen: "BTC", moneda_destino: "", monto: "500.0", cuenta_origen: "userB", cuenta_destino: "", tipo: :alta_cuenta},
+      %Transaccion{id: 3, timestamp: "1754937003", moneda_origen: "BTC", moneda_destino: "", monto: "1000.0", cuenta_origen: "userA", cuenta_destino: "userB", tipo: :transferencia}
+    ]
+    conversion_values = %{"BTC" => 30000.00, "ETH" => 2500.00, "USDT" => 1.00}
+    assert { :error, "Moneda no econtrada"} == BalanceCommand.get_balance(transactions, %{cuenta_origen: "userB", moneda: "DOGE"}, conversion_values)
   end
 end

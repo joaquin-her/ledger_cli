@@ -5,7 +5,7 @@ defmodule CliTest do
   test "print in console all transactions" do
     expected_output =
 "ID | TIMESTAMP | MONEDA_ORIGEN | MONEDA_DESTINO | MONTO | CUENTA_ORIGEN | CUENTA_DESTINO | TIPO\n" <>
-"1;1754937004;USDT;USDT;100.50;userA;userB;transferencia;\n" <>
+"1;1754937004;USDT;USDT;100.50;userA;userB;transferencia\n" <>
 "2;1755541804;BTC;USDT;0.1;userB;;swap\n" <>
 "3;1756751404;BTC;;50000;userC;;alta_cuenta\n" <>
 "4;1757183404;USDT;BTC;500.25;userD;userE;transferencia\n" <>
