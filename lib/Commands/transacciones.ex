@@ -19,8 +19,7 @@ defmodule Commands.TransactionsCommand do
 
   def get_transactions_of_account(transactions, account_name) do
     transactions
-    |> filter_by_origin_account(account_name)
-    |> Enum.concat(filter_by_destiny_account( transactions, account_name))
+    |> Enum.filter(fn t -> t.cuenta_origen == account_name or t.cuenta_destino == account_name end)
     |> Enum.sort_by(fn t -> t.timestamp end)
   end
 

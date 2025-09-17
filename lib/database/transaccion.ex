@@ -13,7 +13,7 @@ defmodule Transaccion do
       "#{timestamp};" <>
       "#{moneda_origen};" <>
       "#{moneda_destino};" <>
-      "#{monto};" <>
+      "#{Float.to_string(monto) };" <>
       "#{cuenta_origen};" <>
       "#{cuenta_destino};" <>
       "#{tipo}";

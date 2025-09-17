@@ -11,7 +11,7 @@ defmodule TransactionCommandTest do
         timestamp: "1754937004",
         moneda_origen: "USDT",
         moneda_destino: "USDT",
-        monto: "100.50",
+        monto: 100.5,
         cuenta_origen: "userA",
         cuenta_destino: "userB",
         tipo: :transferencia

@@ -12,7 +12,7 @@ defmodule Ledger.CSV_Database_Tests do
     timestamp: "1754937004",
     moneda_origen: "USDT",
     moneda_destino: "USDT",
-    monto: "100.50",
+    monto: 100.5,
     cuenta_origen: "userA",
     cuenta_destino: "userB",
     tipo: :transferencia
@@ -22,7 +22,7 @@ defmodule Ledger.CSV_Database_Tests do
     timestamp: "1755541804",
     moneda_origen: "BTC",
     moneda_destino: "USDT",
-    monto: "0.1",
+    monto: 0.1,
     cuenta_origen: "userB",
     cuenta_destino: "",
     tipo: :swap
@@ -32,7 +32,7 @@ defmodule Ledger.CSV_Database_Tests do
     timestamp: "1756751404",
     moneda_origen: "BTC",
     moneda_destino: "",
-    monto: "50000",
+    monto: 50000.0,
     cuenta_origen: "userC",
     cuenta_destino: "",
     tipo: :alta_cuenta
@@ -42,7 +42,7 @@ defmodule Ledger.CSV_Database_Tests do
     timestamp: "1757183404",
     moneda_origen: "USDT",
     moneda_destino: "BTC",
-    monto: "500.25",
+    monto: 500.25,
     cuenta_origen: "userD",
     cuenta_destino: "userE",
     tipo: :transferencia
@@ -52,7 +52,7 @@ defmodule Ledger.CSV_Database_Tests do
     timestamp: "1757615404",
     moneda_origen: "ETH",
     moneda_destino: "USDT",
-    monto: "1.5",
+    monto: 1.5,
     cuenta_origen: "userF",
     cuenta_destino: "userG",
     tipo: :swap

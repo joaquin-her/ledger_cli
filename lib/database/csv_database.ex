@@ -15,7 +15,9 @@ defmodule Database.CSV_Database do
         cuenta_destino: row["cuenta_destino"],
         moneda_origen: row["moneda_origen"],
         moneda_destino: row["moneda_destino"],
-        monto: row["monto"],
+        monto: row["monto"]
+        |> Float.parse()
+        |> elem(0),
         timestamp: row["timestamp"]
      }
     end)
