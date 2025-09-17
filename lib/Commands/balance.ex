@@ -10,12 +10,20 @@ defmodule Commands.BalanceCommand do
   """
   def get_balance(transactions, arguments, conversion_map) do
     Enum.sort_by(transactions, fn t -> t.timestamp end)
-    cond do
-      Map.get(Enum.at(transactions, 0), :tipo) == :alta_cuenta ->
+    case {is_registerd?(transactions, arguments.cuenta_origen)} do
+      {true} ->
         _get_balance(transactions, arguments, conversion_map)
-      false ->
+      {false} ->
         "la cuenta solicitada no fue dada de alta"
     end
+  end
+
+  @doc """
+  Recibe un enumerable de transacciones y el nombre de una cuenta para definir si esa cuenta fue dada de alta en algun momento
+  """
+  defp is_registerd?(transactions, account_name) do
+    Enum.any?(transactions, fn t -> t.cuenta_origen == account_name && t.tipo == :alta_cuenta end )
+    #Map.get(Enum.at(transactions, 0), :tipo) == :alta_cuenta
   end
 
   defp _get_balance(transactions, arguments, conversion_map) do

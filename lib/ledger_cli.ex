@@ -8,14 +8,15 @@ defmodule LedgerApp.CLI do
   alias Commands.TransactionsCommand
 
   def main(args) do
-    Enum.at(args,0)
-    |> run_command()
+    IO.inspect(args)
+    run_command(args)
   end
 
   def run_command(args) do
     {status, config} = parse_args(args)
     case {status, config} do
       {:ok, arguments} ->
+        IO.inspect(arguments)
         case arguments.subcommand do
           "balance" ->
             handle_balance(arguments)
@@ -45,7 +46,6 @@ defmodule LedgerApp.CLI do
 
   defp parse_args(args) do
     [command | arguments] = args
-        |> String.split(" ")
     {options, remaining_args, errors} =
       arguments
       |> OptionParser.parse(
