@@ -3,32 +3,32 @@
 **TODO: Add description**
 
 - Transacciones:
-[x] v1: mostrar todas las transacciones
-[x] v2: mostrar todas las transacciones de una cuenta especifica usando c1 como flag
+- [x] v1: mostrar todas las transacciones
+- [x] v2: mostrar todas las transacciones de una cuenta especifica usando c1 como flag
     2.1: implementar flag
-[x] v3: mostrar todas las transacciones de una cuenta especifica usando c1 como flag imprimiendolas en un archivo .csv
+- [x] v3: mostrar todas las transacciones de una cuenta especifica usando c1 como flag imprimiendolas en un archivo .csv
     3.1: implementar flag
-[x] Hacer pattern matching con el subcommand en vez de agregar un string
-[x] bug: faltan valores por defecto para los siguientes parametros: [cuenta destino, moneda, output consola]
-[x] Agregar utilidad a -c2 para subcomando transacciones
-[x] Validar durante la _ del csv la existencia del tipo de transaccion
-[x] Validar durante la conversion del csv la existencia de las monedas utilizadas en moneda_origen y moneda_destino
-[ ] Validar que se escriben correctamente las transacciones cuando se:
+- [x] Hacer pattern matching con el subcommand en vez de agregar un string
+- [x] bug: faltan valores por defecto para los siguientes parametros: [cuenta destino, moneda, output consola]
+- [x] Agregar utilidad a -c2 para subcomando transacciones
+- [x] Validar durante la _ del csv la existencia del tipo de transaccion
+- [x] Validar durante la conversion del csv la existencia de las monedas utilizadas en moneda_origen y moneda_destino
+ - [ ] Validar que se escriben correctamente las transacciones cuando se:
     - [ ] define un archivo con cualquier terminacion
     - [ ] cuando se define la salida
     - [ ] cuando no se define la salida
     - [ ] cuando el filtrado de las transacciones resulta vacio
 
 - Balance:
-[x] Hacer necesario el flag -c1
-[x] Obtener el balance de la cuenta dada la moneda en -m
-[x] Formatear el resultado
-[x] Testear manualmente con el ./ledger
-[x] Reformatear salida de balance a ejemplificada por la catedra
-[x] Agregar salida no estandar hacia archivos de el resultado de balance
+- [x] Hacer necesario el flag -c1
+- [x] Obtener el balance de la cuenta dada la moneda en -m
+- [x] Formatear el resultado
+- [x] Testear manualmente con el ./ledger
+- [x] Reformatear salida de balance a ejemplificada por la catedra
+- [x] Agregar salida no estandar hacia archivos de el resultado de balance
 
-[ ] Crear mas casos de pruebas para los distintos modulos
-[ ] Reordenar el codigo en modulos y funciones mas responsablemente
+- [ ] Crear mas casos de pruebas para los distintos modulos
+- [ ] Reordenar el codigo en modulos y funciones mas responsablemente
 
 
 ### Errores generados/atrapados:
