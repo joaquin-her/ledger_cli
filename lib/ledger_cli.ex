@@ -38,7 +38,7 @@ defmodule LedgerApp.CLI do
           CSV_Database.get_currencies(args.path_currencies_data),
           CSV_Database.get_transactions(args.path_transacciones_data)
         }
-          case Map.has_key?(conversion_map, args.moneda) do
+          case Map.has_key?(conversion_map, args.moneda) || args.moneda == "all" do
             false ->
               IO.puts("La moneda no existe en el archivo de monedas")
               true ->
@@ -47,14 +47,14 @@ defmodule LedgerApp.CLI do
                   :error ->
                     IO.inspect({:error, balance})
                   :ok ->
-                    balance
+                    {status, balance}
                     |> BalanceCommand.output_balance(args.output_path)
                 end
           end
     end
   end
 
-  def parse_args(args) do
+  defp parse_args(args) do
     [command | arguments] = args
     {options, remaining_args, errors} =
       arguments

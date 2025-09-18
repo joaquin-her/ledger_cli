@@ -50,4 +50,11 @@ defmodule CliTest do
       LedgerApp.CLI.main(["balance", "-flag_inexistente", "userA", "-t", "test_data.csv"])
     end)
   end
+
+  test "un balance se imprime correctamente en consola" do
+    expected_output = "MONEDA=BALANCE\nUSDT=100.500000\n"
+    assert expected_output == capture_io(fn ->
+      LedgerApp.CLI.main(["balance", "-c1", "userA", "-t", "test_data.csv"])
+    end)
+  end
 end
