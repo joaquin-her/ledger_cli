@@ -11,8 +11,7 @@ defmodule Commands.BalanceCommand do
   o un error si la cuenta no fue dada de alta o si la moneda solicitada no esta en la lista de conversiones
   """
   def get_balance(transactions, arguments, conversion_map) do
-    filtered_transactions = Enum.sort_by(transactions, fn t -> t.timestamp end)
-      |> TransactionsCommand.get_transactions_of_account(arguments.cuenta_origen)
+    filtered_transactions = TransactionsCommand.get_transactions_of_account(transactions, arguments.cuenta_origen)
     case is_registerd?(filtered_transactions, arguments.cuenta_origen) do
       true ->
         try do
@@ -53,6 +52,10 @@ defmodule Commands.BalanceCommand do
   defp reduce_transactions(transactions, arguments, conversion_map) do
     transactions
     |> Enum.reduce(%{}, fn transaction, balance ->
+      case transaction.monto < 0 do
+        true -> raise %RuntimeError{message: "#{transaction.id}"}
+        false -> nil
+      end
       case transaction.tipo do
         :transferencia ->
           balance
@@ -88,23 +91,19 @@ defmodule Commands.BalanceCommand do
   defp convert_to_currency(balance, "all", _conversion_map) do
     balance
     |> Enum.map(fn {moneda, monto} -> {moneda, Float.round(monto, 6)} end)
+    |> Enum.into(%{})
   end
 
   defp convert_to_currency(balance, currency, conversion_map) do
-    case Map.has_key?(conversion_map, currency) do
-      true ->
-        total_in_usd = Enum.reduce(balance, 0.0, fn {moneda, monto}, acc ->
-          case Map.has_key?(conversion_map, Atom.to_string(moneda)) do
-            true -> acc + (monto * conversion_map[Atom.to_string(moneda)])
-            false -> acc
-          end
-        end)
-        converted_amount = total_in_usd / conversion_map[currency]
-        |> Float.round(6)
-        %{ String.to_atom(currency) => converted_amount  }
-      false ->
-        raise %RuntimeError{message: "la moneda #{currency} no esta en la lista de conversiones"}
+    total_in_usd = Enum.reduce(balance, 0.0, fn {moneda, monto}, acc ->
+      case Map.has_key?(conversion_map, Atom.to_string(moneda)) do
+        true -> acc + (monto * conversion_map[Atom.to_string(moneda)])
+        false -> acc
       end
+    end)
+    converted_amount = total_in_usd / conversion_map[currency]
+    |> Float.round(6)
+    %{ String.to_atom(currency) => converted_amount  }
   end
 
   defp is_registerd?(transactions, account_name) do
