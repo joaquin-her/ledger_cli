@@ -6,6 +6,7 @@ defmodule Commands.TransactionsCommand do
   def filter(transactions, arguments) do
     transactions
     |> filter_by_origin_account(arguments.cuenta_origen)
+    |> filter_by_destiny_account(arguments.cuenta_destino)
   end
 
   def filter_by_origin_account(transactions, account_name) do

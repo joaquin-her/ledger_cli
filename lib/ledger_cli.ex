@@ -19,12 +19,16 @@ defmodule LedgerApp.CLI do
           "balance" ->
             handle_balance(arguments)
           "transacciones" ->
-            CSV_Database.get_transactions(arguments.path_transacciones_data)
-            |> TransactionsCommand.filter(arguments)
-            |> CSV_Database.write_transactions(arguments.output_path)
+            handle_transacciones(arguments)
           _ -> IO.puts("Comando no reconocido")
         end
     end
+  end
+
+  defp handle_transacciones(arguments) do
+    CSV_Database.get_transactions(arguments.path_transacciones_data)
+    |> TransactionsCommand.filter(arguments)
+    |> CSV_Database.write_transactions(arguments.output_path)
   end
 
   defp handle_balance(args) do
