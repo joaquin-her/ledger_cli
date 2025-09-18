@@ -15,9 +15,15 @@ defmodule Commands.BalanceCommand do
       |> TransactionsCommand.get_transactions_of_account(arguments.cuenta_origen)
     case is_registerd?(filtered_transactions, arguments.cuenta_origen) do
       true ->
-        filtered_transactions
-        |> reduce_transactions(arguments, conversion_map)
-        |> convert_to_currency(arguments.moneda, conversion_map)
+        try do
+          result = filtered_transactions
+            |> reduce_transactions(arguments, conversion_map)
+            |> convert_to_currency(arguments.moneda, conversion_map)
+          {:ok, result}
+        rescue
+          e in RuntimeError ->
+            {:error, String.to_integer(e.message)}
+        end
       false ->
         { :error, "la cuenta solicitada no fue dada de alta"}
     end
@@ -58,8 +64,7 @@ defmodule Commands.BalanceCommand do
           balance
           |> apply_swap( transaction, conversion_map)
         _ ->
-          IO.puts("no es transferencia")
-          balance
+          raise %RuntimeError{message: "#{transaction.id}"}
       end
     end)
   end
@@ -83,7 +88,6 @@ defmodule Commands.BalanceCommand do
   defp convert_to_currency(balance, "all", _conversion_map) do
     balance
     |> Enum.map(fn {moneda, monto} -> {moneda, Float.round(monto, 6)} end)
-    {:ok, balance}
   end
 
   defp convert_to_currency(balance, currency, conversion_map) do
@@ -97,10 +101,10 @@ defmodule Commands.BalanceCommand do
         end)
         converted_amount = total_in_usd / conversion_map[currency]
         |> Float.round(6)
-        {:ok, %{ String.to_atom(currency) => converted_amount  }}
+        %{ String.to_atom(currency) => converted_amount  }
       false ->
-        {:error, "Moneda no encontrada en la lista de conversiones"}
-    end
+        raise %RuntimeError{message: "la moneda #{currency} no esta en la lista de conversiones"}
+      end
   end
 
   defp is_registerd?(transactions, account_name) do
@@ -116,8 +120,7 @@ defmodule Commands.BalanceCommand do
         |> add_amount(transaction.moneda_origen,transaction.monto * -1)
         |> add_amount(transaction.moneda_destino, destino_from_usd)
       _ ->
-        {:error, transaction.id}
-        balance
+        raise %RuntimeError{message: "#{transaction.id}"}
     end
   end
 end

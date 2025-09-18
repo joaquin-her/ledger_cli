@@ -141,4 +141,48 @@ defmodule BalanceCommandTests do
       BalanceCommand.output_balance(balance, output_path)
     end)
   end
+
+  test "una cuenta no registrada devuelve un error" do
+    transactions = [
+      %Transaccion{id: 1, timestamp: "1754937004", moneda_origen: "USDT", moneda_destino: "", monto: 5000.0, cuenta_origen: "userA", cuenta_destino: "", tipo: :alta_cuenta},
+      %Transaccion{id: 2, timestamp: "1754937024", moneda_origen: "USDT", moneda_destino: "ETH", monto: 5000.0, cuenta_origen: "userA", cuenta_destino: "", tipo: :swap},
+      %Transaccion{id: 3, timestamp: "1755541804", moneda_origen: "ETH", moneda_destino: "", monto: 2.0, cuenta_origen: "userB", cuenta_destino: "", tipo: :alta_cuenta}
+    ]
+    conversion_values = %{}
+    arguments = %{cuenta_origen: "userX", moneda: "all"}
+    assert { :error, "la cuenta solicitada no fue dada de alta"} == BalanceCommand.get_balance(transactions, arguments, conversion_values)
+  end
+
+  test "una transaccion de un tipo desconocido arroja un error y la linea donde fue encontrada" do
+    transactions = [
+      %Transaccion{id: 1, timestamp: "1754937004", moneda_origen: "USDT", moneda_destino: "", monto: 5000.0, cuenta_origen: "userB", cuenta_destino: "", tipo: :alta_cuenta},
+      %Transaccion{id: 2, timestamp: "1754937024", moneda_origen: "USDT", moneda_destino: "ETH", monto: 5000.0, cuenta_origen: "userA", cuenta_destino: "", tipo: :swap},
+      %Transaccion{id: 3, timestamp: "1755541804", moneda_origen: "ETH", moneda_destino: "", monto: 2.0, cuenta_origen: "userB", cuenta_destino: "", tipo: :baja_cuenta}
+    ]
+    conversion_values = %{}
+    arguments = %{cuenta_origen: "userB", moneda: "all"}
+    assert {:error, 3} == BalanceCommand.get_balance(transactions, arguments, conversion_values)
+  end
+
+  test "un swap en una moneda no registrada en el mapa de conversion arroja un error con la linea donde fue encontrada" do
+    transactions = [
+      %Transaccion{id: 1, timestamp: "1754937004", moneda_origen: "USDT", moneda_destino: "", monto: 5000.0, cuenta_origen: "userA", cuenta_destino: "", tipo: :alta_cuenta},
+      %Transaccion{id: 2, timestamp: "1754937024", moneda_origen: "USDT", moneda_destino: "BTC", monto: 5000.0, cuenta_origen: "userA", cuenta_destino: "", tipo: :swap},
+      %Transaccion{id: 3, timestamp: "1755541804", moneda_origen: "ETH", moneda_destino: "", monto: 2.0, cuenta_origen: "userB", cuenta_destino: "", tipo: :alta_cuenta}
+    ]
+    conversion_values = %{"USDT" => 1.0, "ETH" => 2500.00}
+    arguments = %{cuenta_origen: "userA", moneda: "all"}
+    assert {:error, 2} == BalanceCommand.get_balance(transactions, arguments, conversion_values)
+  end
+
+  test "una transferencia en una moneda con un monto negativo arroja un error con la linea donde fue encontrada" do
+    transactions = [
+      %Transaccion{id: 1, timestamp: "1754937004", moneda_origen: "USDT", moneda_destino: "", monto: 5000.0, cuenta_origen: "userA", cuenta_destino: "", tipo: :alta_cuenta},
+      %Transaccion{id: 2, timestamp: "1754937024", moneda_origen: "USDT", moneda_destino: "", monto: -5000.0, cuenta_origen: "userA", cuenta_destino: "userB", tipo: :transferencia},
+      %Transaccion{id: 3, timestamp: "1755541804", moneda_origen: "ETH", moneda_destino: "", monto: 2.0, cuenta_origen: "userB", cuenta_destino: "", tipo: :alta_cuenta}
+    ]
+    conversion_values = %{"USDT" => 1.0, "ETH" => 2500.00}
+    arguments = %{cuenta_origen: "userB", moneda: "all"}
+    assert {:error, 2} == BalanceCommand.get_balance(transactions, arguments, conversion_values)
+  end
 end
