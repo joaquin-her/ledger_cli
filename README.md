@@ -13,6 +13,11 @@
 [x] Agregar utilidad a -c2 para subcomando transacciones
 [x] Validar durante la _ del csv la existencia del tipo de transaccion
 [x] Validar durante la conversion del csv la existencia de las monedas utilizadas en moneda_origen y moneda_destino
+[ ] Validar que se escriben correctamente las transacciones cuando se:
+    - [ ] define un archivo con cualquier terminacion
+    - [ ] cuando se define la salida
+    - [ ] cuando no se define la salida
+    - [ ] cuando el filtrado de las transacciones resulta vacio
 
 - Balance:
 [x] Hacer necesario el flag -c1
