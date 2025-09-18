@@ -8,10 +8,6 @@ defmodule LedgerApp.CLI do
   alias Commands.TransactionsCommand
 
   def main(args) do
-    run_command(args)
-  end
-
-  def run_command(args) do
     {status, config} = parse_args(args)
     case {status, config} do
       {:ok, arguments} ->
@@ -22,6 +18,8 @@ defmodule LedgerApp.CLI do
             handle_transacciones(arguments)
           _ -> IO.puts("Comando no reconocido")
         end
+      {:error, reason} ->
+        IO.puts("#{reason}")
     end
   end
 
@@ -56,7 +54,7 @@ defmodule LedgerApp.CLI do
     end
   end
 
-  defp parse_args(args) do
+  def parse_args(args) do
     [command | arguments] = args
     {options, remaining_args, errors} =
       arguments
@@ -88,14 +86,14 @@ defmodule LedgerApp.CLI do
       {_opts, remaining, []} ->
         remaining
         |> Enum.join(", ")
-        |> then(fn msg -> {:error, "Argumentos no reconocidos: #{msg}"} end)
+        |> then(fn msg -> {:error ,"#{msg} no se reconoce como opcion valida"} end)
 
 
       {_opts, _remaining, errors} ->
         errors
-        |> Enum.map(fn {key, val} -> "#{key}: #{val}" end)
+        |> Enum.map(fn {key, val} -> "#{key}#{val}" end)
         |> Enum.join(", ")
-        |> then(fn msg -> {:error, "Errores: #{msg}"} end)
+        |> then(fn msg -> {:error ,"#{msg} no se reconoce como opcion valida"} end)
       end
     end
 
