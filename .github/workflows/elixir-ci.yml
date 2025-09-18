@@ -2,26 +2,53 @@ name: Elixir CI
 
 on:
   push:
-    branches: [ "main", "code-implement" ]
+    branches: [ "main" ]
   pull_request:
-    branches: [ "main", "code-implement" ]
+    branches: [ "main" ]
+
+env:
+  MIX_ENV: test
 
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Set up Elixir
         uses: erlef/setup-beam@v1
         with:
           elixir-version: '1.15'
           otp-version: '26.0'
+      
+      # Cache dependencies to speed up builds
+      - name: Cache deps
+        uses: actions/cache@v3
+        with:
+          path: deps
+          key: ${{ runner.os }}-mix-${{ hashFiles('**/mix.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-mix-
+      
+      # Cache compiled build
+      - name: Cache compiled build
+        uses: actions/cache@v3
+        with:
+          path: _build
+          key: ${{ runner.os }}-build-${{ hashFiles('**/mix.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-build-
+      
       - name: Install dependencies
         run: mix deps.get
+      
+      - name: Compile
+        run: mix compile --warnings-as-errors
+      
       - name: Build escript
         run: mix escript.build
+      
       - name: Upload escript artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4  # Updated to v4
         with:
           name: build
           path: ./ledger_cli
@@ -29,32 +56,84 @@ jobs:
   test:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Set up Elixir
         uses: erlef/setup-beam@v1
         with:
-          elixir-version: '1.15'
+          elixir-version: '1.16'
           otp-version: '26.0'
+      
+      - name: Cache deps
+        uses: actions/cache@v3
+        with:
+          path: deps
+          key: ${{ runner.os }}-mix-${{ hashFiles('**/mix.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-mix-
+      
+      - name: Cache compiled build
+        uses: actions/cache@v3
+        with:
+          path: _build
+          key: ${{ runner.os }}-build-${{ hashFiles('**/mix.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-build-
+      
       - name: Install dependencies
         run: mix deps.get
+      
+      - name: Compile
+        run: mix compile --warnings-as-errors
+      
       - name: Run tests
         run: mix test
 
   coverage:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Set up Elixir
         uses: erlef/setup-beam@v1
         with:
-          elixir-version: '1.15'
+          elixir-version: '1.16'
           otp-version: '26.0'
+      
+      - name: Cache deps
+        uses: actions/cache@v3
+        with:
+          path: deps
+          key: ${{ runner.os }}-mix-${{ hashFiles('**/mix.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-mix-
+      
+      - name: Cache compiled build
+        uses: actions/cache@v3
+        with:
+          path: _build
+          key: ${{ runner.os }}-build-${{ hashFiles('**/mix.lock') }}
+          restore-keys: |
+            ${{ runner.os}}-build-
+      
       - name: Install dependencies
         run: mix deps.get
+      
+      - name: Compile
+        run: mix compile 
+      
       - name: Run coverage
         run: mix test --cover
+      
+      # The basic --cover doesn't create a cover/ directory by default
+      # You need to use ExCoveralls or specify output
+      - name: Generate coverage report
+        run: |
+          mix deps.get
+          mix coveralls.html
+        continue-on-error: true  # In case ExCoveralls isn't configured
+      
       - name: Upload coverage report
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: coverage
           path: cover/
+        if: always()  # Upload even if coverage generation failed
