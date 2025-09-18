@@ -9,14 +9,19 @@
 [x] v3: mostrar todas las transacciones de una cuenta especifica usando c1 como flag imprimiendolas en un archivo .csv
     3.1: implementar flag
 [x] Hacer pattern matching con el subcommand en vez de agregar un string
-
 [x] bug: faltan valores por defecto para los siguientes parametros: [cuenta destino, moneda, output consola]
+[ ] Agregar utilidad a -c2 para subcomando transacciones
+[ ] Validar durante la conversion del csv la existencia de las monedas utilizadas en moneda_origen y moneda_destino
 
 - Balance:
 [x] Hacer necesario el flag -c1
 [x] Obtener el balance de la cuenta dada la moneda en -m
 [x] Formatear el resultado
-[ ] Testear manualmente con el ./ledger
+[x] Testear manualmente con el ./ledger
+[ ] Reformatear salida de balance a ejemplificada por la catedra
+[ ] Agregar salida no estandar hacia archivos de el resultado de balance
+[ ] Agregar utilidad a -c2 para subcomando balance donde se genere un balance entre esas dos cuentas (util para observar direccion de las transferencias)
+
 [ ] Crear mas casos de pruebas para los distintos modulos
 [ ] Reordenar el codigo en modulos y funciones mas responsablemente
 
