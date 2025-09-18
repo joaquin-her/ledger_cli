@@ -37,8 +37,7 @@ defmodule LedgerApp.CLI do
         CSV_Database.get_transactions(args.path_transacciones_data)
         |> TransactionsCommand.get_transactions_of_account(args.cuenta_origen)
         |> BalanceCommand.get_balance(args, conversion_map)
-        |> IO.inspect()
-        #|> CSV_Database.write_transactions(args.output_path)
+        |> BalanceCommand.output_balance(args.output_path)
     end
   end
 
