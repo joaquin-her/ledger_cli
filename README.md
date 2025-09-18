@@ -11,8 +11,8 @@
 [x] Hacer pattern matching con el subcommand en vez de agregar un string
 [x] bug: faltan valores por defecto para los siguientes parametros: [cuenta destino, moneda, output consola]
 [x] Agregar utilidad a -c2 para subcomando transacciones
-[ ] Validar durante la conversion del csv la existencia de las monedas utilizadas en moneda_origen y moneda_destino
-[ ] Validar durante la _ del csv la existencia del tipo de transaccion
+[x] Validar durante la _ del csv la existencia del tipo de transaccion
+[x] Validar durante la conversion del csv la existencia de las monedas utilizadas en moneda_origen y moneda_destino
 
 - Balance:
 [x] Hacer necesario el flag -c1
