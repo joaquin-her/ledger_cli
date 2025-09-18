@@ -121,4 +121,15 @@ defmodule BalanceCommandTests do
     # redondeado a 6 decimales = 6_026_585.223232 doge
     assert { :ok, %{DOGE: 6026585.223232 }} == BalanceCommand.get_balance(transactions, %{cuenta_origen: "userB", moneda: "DOGE"}, conversion_values)
   end
+
+  test "el balance de una cuenta se imprime correctamente por consola" do
+    expected_output = "MONEDA=BALANCE\nUSDT=500.000000\nBTC=0.000000\nDOGE=6026585.223232\n"
+    balance = {:ok, %{DOGE: 6026585.223232, USDT: 500.0, BTC: 0.0}}
+    output_path = "console"
+    assert :ok == BalanceCommand.output_balance(balance, output_path)
+    assert expected_output == ExUnit.CaptureIO.capture_io(fn ->
+      BalanceCommand.output_balance(balance, output_path)
+    end)
+  end
+
 end

@@ -2,11 +2,13 @@ defmodule Commands.BalanceCommand do
   @moduledoc """
   Subcomando para calcular balances
   """
+  alias Database.CSV_Database
   alias Commands.TransactionsCommand
-
+  alias Database.Moneda
   @doc """
-  La funcion recibe el historial de las transacciones de una cuenta incluyendo su alta de cuenta, las transacciones que realizó y realizaron hacia ella, y los swaps que haya hehco
-  Devuelve un mapa con el balance de las monedas de las que dispone luego de todas sus transacciones
+  La funcion recibe un historial de transacciones, los argumentos de la linea de comando y un mapa de conversiones
+  Devuelve un mapa con el balance de las monedas de las que dispone la cuenta solicitada
+  o un error si la cuenta no fue dada de alta o si la moneda solicitada no esta en la lista de conversiones
   """
   def get_balance(transactions, arguments, conversion_map) do
     filtered_transactions = Enum.sort_by(transactions, fn t -> t.timestamp end)
@@ -19,6 +21,26 @@ defmodule Commands.BalanceCommand do
       false ->
         { :error, "la cuenta solicitada no fue dada de alta"}
     end
+  end
+
+  def output_balance({:ok, balance}, path) do
+    output = balance
+    |> Enum.map(fn {nombre, monto} -> %{ nombre: nombre, monto: :erlang.float_to_binary(monto, [{:decimals, 6}])} end)
+    IO.puts("MONEDA=BALANCE")
+    case path do
+      "console" ->
+        output
+        |> Enum.each(fn moneda -> IO.puts("#{moneda.nombre}=#{moneda.monto}") end)
+      _ ->
+        case File.write(path, Enum.map(balance, fn moneda -> "#{moneda}\n" end)) do
+          :ok -> :ok
+          {:error, reason} -> {:error, reason}
+        end
+    end
+  end
+
+  def output_balance({:error, line}, path) do
+    line
   end
 
   defp reduce_transactions(transactions, arguments, conversion_map) do
@@ -80,9 +102,6 @@ defmodule Commands.BalanceCommand do
     end
   end
 
-  @doc """
-  Recibe un enumerable de transacciones y el nombre de una cuenta para definir si esa cuenta fue dada de alta en algun momento
-  """
   defp is_registerd?(transactions, account_name) do
     Enum.any?(transactions, fn t -> t.cuenta_origen == account_name && t.tipo == :alta_cuenta end )
   end
