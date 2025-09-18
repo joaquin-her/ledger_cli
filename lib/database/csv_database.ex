@@ -69,12 +69,12 @@ defmodule Database.CSV_Database do
     end
   end
 
-def get_currencies(path) do
-  path
-  |> File.stream!()
-  |> CSV.decode!(separator: ?;, headers: true)
-  |> Enum.reduce( %{} ,fn row, currencies ->
-    Map.put(currencies, row["nombre_moneda"], row["precio_usd"] |> String.to_float())
-    end)
- end
+  def get_currencies(path) do
+    path
+    |> File.stream!()
+    |> CSV.decode!(separator: ?;, headers: true)
+    |> Enum.reduce( %{} ,fn row, currencies ->
+      Map.put(currencies, row["nombre_moneda"], row["precio_usd"] |> String.to_float())
+      end)
+  end
 end

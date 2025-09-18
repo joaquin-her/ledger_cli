@@ -132,4 +132,13 @@ defmodule BalanceCommandTests do
     end)
   end
 
+  test "un balance erroneo se imprime correctamente por consola" do
+    expected_output = "{:error, la cuenta solicitada no fue dada de alta}\n"
+    balance = {:error, "la cuenta solicitada no fue dada de alta"}
+    output_path = "console"
+    assert :ok == BalanceCommand.output_balance(balance, output_path)
+    assert expected_output == ExUnit.CaptureIO.capture_io(fn ->
+      BalanceCommand.output_balance(balance, output_path)
+    end)
+  end
 end

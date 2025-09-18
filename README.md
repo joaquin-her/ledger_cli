@@ -18,9 +18,8 @@
 [x] Obtener el balance de la cuenta dada la moneda en -m
 [x] Formatear el resultado
 [x] Testear manualmente con el ./ledger
-[ ] Reformatear salida de balance a ejemplificada por la catedra
-[ ] Agregar salida no estandar hacia archivos de el resultado de balance
-[ ] Agregar utilidad a -c2 para subcomando balance donde se genere un balance entre esas dos cuentas (util para observar direccion de las transferencias)
+[x] Reformatear salida de balance a ejemplificada por la catedra
+[0] Agregar salida no estandar hacia archivos de el resultado de balance
 
 [ ] Crear mas casos de pruebas para los distintos modulos
 [ ] Reordenar el codigo en modulos y funciones mas responsablemente

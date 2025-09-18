@@ -25,22 +25,23 @@ defmodule Commands.BalanceCommand do
 
   def output_balance({:ok, balance}, path) do
     output = balance
-    |> Enum.map(fn {nombre, monto} -> %{ nombre: nombre, monto: :erlang.float_to_binary(monto, [{:decimals, 6}])} end)
-    IO.puts("MONEDA=BALANCE")
+      |> Enum.map(fn {nombre, monto} -> %{ nombre: nombre, monto: :erlang.float_to_binary(monto, [{:decimals, 6}])} end)
     case path do
       "console" ->
-        output
-        |> Enum.each(fn moneda -> IO.puts("#{moneda.nombre}=#{moneda.monto}") end)
+        IO.puts("MONEDA=BALANCE")
+        Enum.each(output, fn moneda -> IO.puts("#{moneda.nombre}=#{moneda.monto}") end)
       _ ->
-        case File.write(path, Enum.map(balance, fn moneda -> "#{moneda}\n" end)) do
-          :ok -> :ok
-          {:error, reason} -> {:error, reason}
+        case File.write(path, Enum.map(balance, fn {moneda, monto} -> "#{moneda}=#{:erlang.float_to_binary(monto, [{:decimals, 6}])}\n" end)) do
+          :ok -> IO.puts("Balance guardado en: #{path}")
+          {:error, reason} ->
+            IO.puts("Error al guardar el balance: #{reason}")
+            {:error, reason}
         end
     end
   end
 
   def output_balance({:error, line}, path) do
-    line
+    IO.puts("{:error, #{line}}")
   end
 
   defp reduce_transactions(transactions, arguments, conversion_map) do
@@ -119,22 +120,4 @@ defmodule Commands.BalanceCommand do
         balance
     end
   end
-        #   |> Enum.each(fn t ->
-        #   case {t.tipo, t.moneda_origen, t.modena_destino, t.monto} do
-        #     {"transferencia", moneda_origen, _, monto} ->
-        #     # para las transferencias debe:
-        #       # sumar al balance en esa moneda si la cuenta -c1 es cuenta_destino
-        #       # restar al balance en esa moneda si la cuenta -c1 es cuenta_origen
-        #       IO.puts("Procesando transferencia")
-        #     {"swap", moneda_origen, moneda_destino, monto} ->
-        #       # para los swaps debe restar al balance en la moneda_origen y sumar al balance en la moneda_destino acorde al valor de la conversion
-        #       IO.puts("Procesando swap")
-        #     {"alta_cuenta", moneda_origen, _, monto} ->
-        #       # para las alta de cuenta debe asignar su valor inicial con el que se dio de alta a el balance
-        #       IO.puts("Procesando alta de cuenta")
-        #   end
-        # end)
-        # devuelve un mapa de clave: valor con la suma de los valores que coincidian
-
-
 end
