@@ -13,7 +13,7 @@ defmodule Transaccion do
       "#{timestamp};" <>
       "#{moneda_origen};" <>
       "#{moneda_destino};" <>
-      "#{Float.to_string(monto) };" <>
+      "#{:erlang.float_to_binary(monto, [{:decimals, 6}, :compact])};" <>
       "#{cuenta_origen};" <>
       "#{cuenta_destino};" <>
       "#{tipo}";

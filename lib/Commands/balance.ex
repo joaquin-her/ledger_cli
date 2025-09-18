@@ -40,7 +40,7 @@ defmodule Commands.BalanceCommand do
     end
   end
 
-  def output_balance({:error, line}, path) do
+  def output_balance({:error, line}, _) do
     IO.puts("{:error, #{line}}")
   end
 
