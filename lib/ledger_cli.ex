@@ -35,13 +35,24 @@ defmodule LedgerApp.CLI do
     case args.cuenta_origen do
       "all" ->
         IO.puts("Error: Debe especificar una cuenta origen con -c1")
-        # throw an exception
       _ ->
-        conversion_map = CSV_Database.get_currencies(args.path_currencies_data)
-        CSV_Database.get_transactions(args.path_transacciones_data)
-        |> TransactionsCommand.get_transactions_of_account(args.cuenta_origen)
-        |> BalanceCommand.get_balance(args, conversion_map)
-        |> BalanceCommand.output_balance(args.output_path)
+        {conversion_map, transactions} = {
+          CSV_Database.get_currencies(args.path_currencies_data),
+          CSV_Database.get_transactions(args.path_transacciones_data)
+        }
+          case Map.has_key?(conversion_map, args.moneda) do
+            false ->
+              IO.puts("La moneda no existe en el archivo de monedas")
+              true ->
+                {status, balance} = BalanceCommand.get_balance(transactions, args, conversion_map)
+                case status do
+                  :error ->
+                    IO.inspect({:error, balance})
+                  :ok ->
+                    balance
+                    |> BalanceCommand.output_balance(args.output_path)
+                end
+          end
     end
   end
 

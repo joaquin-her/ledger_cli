@@ -3,6 +3,7 @@ defmodule Database.CSV_Database do
   Handler de archivos csv para almacenar y leer datos
   """
 
+
   def read_transactions(path) do
     transacciones = path
     |> File.stream!()

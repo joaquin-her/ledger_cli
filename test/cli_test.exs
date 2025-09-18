@@ -5,7 +5,7 @@ defmodule CliTest do
   test "print in console all transactions" do
     expected_output =
 "ID | TIMESTAMP | MONEDA_ORIGEN | MONEDA_DESTINO | MONTO | CUENTA_ORIGEN | CUENTA_DESTINO | TIPO\n" <>
-"1;1754937004;USDT;USDT;100.5;userA;userB;transferencia\n" <>
+"1;1754937004;USDT;USDT;100.5;userA;;alta_cuenta\n" <>
 "2;1755541804;BTC;USDT;0.1;userB;;swap\n" <>
 "3;1756751404;BTC;;50000.0;userC;;alta_cuenta\n" <>
 "4;1757183404;USDT;BTC;500.25;userD;userE;transferencia\n" <>
@@ -30,4 +30,10 @@ defmodule CliTest do
       assert true
   end
 
+  test "una moneda fuera del mapa de conversion devuelve un error" do
+    expected_output = "La moneda no existe en el archivo de monedas\n"
+    assert capture_io(fn ->
+      LedgerApp.CLI.run_command(["balance", "-c1", "userA", "-t", "test_data.csv", "-m", "DOGE"])
+    end) == expected_output
+  end
 end

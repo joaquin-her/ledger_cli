@@ -2,9 +2,7 @@ defmodule Commands.BalanceCommand do
   @moduledoc """
   Subcomando para calcular balances
   """
-  alias Database.CSV_Database
   alias Commands.TransactionsCommand
-  alias Database.Moneda
   @doc """
   La funcion recibe un historial de transacciones, los argumentos de la linea de comando y un mapa de conversiones
   Devuelve un mapa con el balance de las monedas de las que dispone la cuenta solicitada
@@ -96,10 +94,7 @@ defmodule Commands.BalanceCommand do
 
   defp convert_to_currency(balance, currency, conversion_map) do
     total_in_usd = Enum.reduce(balance, 0.0, fn {moneda, monto}, acc ->
-      case Map.has_key?(conversion_map, Atom.to_string(moneda)) do
-        true -> acc + (monto * conversion_map[Atom.to_string(moneda)])
-        false -> acc
-      end
+      acc + (monto * conversion_map[Atom.to_string(moneda)])
     end)
     converted_amount = total_in_usd / conversion_map[currency]
     |> Float.round(6)

@@ -14,8 +14,8 @@ defmodule Ledger.CSV_Database_Tests do
     moneda_destino: "USDT",
     monto: 100.5,
     cuenta_origen: "userA",
-    cuenta_destino: "userB",
-    tipo: :transferencia
+    cuenta_destino: "",
+    tipo: :alta_cuenta
   },
   %Transaccion{
     id: 2,
