@@ -15,15 +15,10 @@ defmodule Commands.BalanceCommand do
     filtered_transactions = TransactionsCommand.get_transactions_of_account(transactions, arguments.cuenta_origen)
     case is_registerd?(filtered_transactions, arguments.cuenta_origen) do
       true ->
-        try do
-          result = filtered_transactions
-            |> reduce_transactions(arguments, conversion_map)
-            |> convert_to_currency(arguments.moneda, conversion_map)
-          {:ok, result}
-        rescue
-          e in RuntimeError ->
-            {:error, String.to_integer(e.message)}
-        end
+        filtered_transactions
+        |> reduce_transactions(arguments, conversion_map)
+        |> convert_to_currency(arguments.moneda, conversion_map)
+        |> then(fn balance -> {:ok, balance} end)
       false ->
         { :error, "la cuenta solicitada no fue dada de alta"}
     end
