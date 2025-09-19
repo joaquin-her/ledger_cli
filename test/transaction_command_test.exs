@@ -1,7 +1,6 @@
 defmodule TransactionCommandTest do
   alias Commands.TransactionsCommand
   use ExUnit.Case
-  alias Database.CSV_Database
   alias Commands.TransactionsCommand
 
   test "get userB account transactions" do
