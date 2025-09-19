@@ -56,13 +56,12 @@ defmodule LedgerApp.CLI do
 
   defp parse_args(args) do
     [command | arguments] = args
+    processed_args = preprocess_account_flags(arguments)
     {options, remaining_args, errors} =
-      arguments
+      processed_args
       |> OptionParser.parse(
         aliases: [
-          c1: :cuenta_origen,
           t: :path_transacciones_data,
-          c2: :cuenta_destino,
           o: :output_path,
           m: :moneda
         ],
@@ -75,6 +74,7 @@ defmodule LedgerApp.CLI do
           moneda: :string
         ]
       )
+
     case {options, remaining_args, errors} do
       {opts, [], []} ->
         opts =
@@ -86,16 +86,26 @@ defmodule LedgerApp.CLI do
       {_opts, remaining, []} ->
         remaining
         |> Enum.join(", ")
-        |> then(fn msg -> {:error ,"#{msg} no se reconoce como opcion valida"} end)
-
+        |> then(fn msg -> {:error, "#{msg} no se reconoce como opcion valida"} end)
 
       {_opts, _remaining, errors} ->
         errors
         |> Enum.map(fn {key, val} -> "#{key}#{val}" end)
         |> Enum.join(", ")
-        |> then(fn msg -> {:error ,"#{msg} no se reconoce como opcion valida"} end)
-      end
+        |> then(fn msg -> {:error, "#{msg} no se reconoce como opcion valida"} end)
     end
+  end
+
+  # Helper function to convert -c1 and -c2 to full option names
+  defp preprocess_account_flags(args) do
+    args
+    |> Enum.flat_map(fn
+      "-c1" -> ["--cuenta-origen"]
+      "-c2" -> ["--cuenta-destino"]
+      arg -> [arg]
+    end)
+  end
+
 
   defp default_args() do
     %{
