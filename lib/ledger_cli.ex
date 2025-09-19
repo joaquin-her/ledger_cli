@@ -1,6 +1,6 @@
 defmodule LedgerApp.CLI do
   @moduledoc """
-  Documentation for `LedgerApp`.
+  Command Line Interface para ledger app
   """
 
   alias Commands.BalanceCommand

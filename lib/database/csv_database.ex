@@ -3,6 +3,9 @@ defmodule Database.CSV_Database do
   Handler de archivos csv para almacenar y leer datos
   """
 
+  @doc """
+  Devuelve una lista de transacciones de tipo struct Transaccion obtenidas en el archivos csv con header en 'path'
+  """
   def get_transactions(path) do
     transacciones = path
     |> File.stream!()
@@ -49,6 +52,9 @@ defmodule Database.CSV_Database do
     end
   end
 
+  @doc """
+  Devuelve una lista de monedas, leidas de un archivo csv o con contenido csv en 'path'
+  """
   def get_currencies(path) do
     path
     |> File.stream!()
