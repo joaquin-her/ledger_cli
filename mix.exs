@@ -4,11 +4,11 @@ defmodule LedgerApp.MixProject do
   def project do
     [
       app: :ledger,
-      version: "0.1.0",
-      elixir: "~> 1.18",
+      version: "0.1.9",
+      elixir: "~> 1.15",
       start_permanent: Mix.env() == :prod,
       deps: deps(),
-
+      escript: escripts(),
       # Docs
       name: "ledger",
       docs: &docs/0
@@ -26,19 +26,19 @@ defmodule LedgerApp.MixProject do
   def deps do
   [
     {:ex_doc, "~> 0.34", only: :dev, runtime: false, warn_if_outdated: true},
+    {:csv, "~> 2.4" },
   ]
+  end
+
+  defp escripts do
+    [main_module: LedgerApp.CLI]
   end
 
   defp docs do
     [
-      main: LedgerApp,
+      main: LedgerApp.CLI,
       extras: ["README.md"]
     ]
   end
 
-  defp aliases do
-    [
-
-    ]
-  end
 end
