@@ -24,27 +24,23 @@ defmodule Database.CSV_Database do
     transacciones
   end
 
-  def encode_transactions(transactions) do
-    transactions
-    |> Enum.map(fn t -> String.Chars.to_string(t) end)
+  defp join_content(header, content) do
+    header
+    |> Enum.concat(Enum.map(content, fn t -> String.Chars.to_string(t) end))
     |> Enum.join("\n")
   end
   defp console_log(transaction) do
     transaction
     |> IO.puts()
   end
-  defp print_transactions_header() do
-    "ID | TIMESTAMP | MONEDA_ORIGEN | MONEDA_DESTINO | MONTO | CUENTA_ORIGEN | CUENTA_DESTINO | TIPO"
-    |> IO.puts()
-  end
-  def write_transactions(transactions, output_path) do
+  def write_in_output(header, content, output_path) do
     case output_path do
       "console" ->
-        print_transactions_header()
-        transactions
+        console_log(header)
+        content
         |> Enum.each(fn t -> console_log(t) end)
       _ ->
-        case File.write(output_path, encode_transactions(transactions)) do
+        case File.write(output_path, join_content(header, content)) do
           :ok -> IO.puts("Transacciones guardadas en: #{output_path}")
           {:error, reason} ->
             IO.puts("Error al guardar las transacciones: #{reason}")

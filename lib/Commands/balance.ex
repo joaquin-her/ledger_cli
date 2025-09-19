@@ -3,6 +3,8 @@ defmodule Commands.BalanceCommand do
   Subcomando para calcular balances
   """
   alias Commands.TransactionsCommand
+  alias Database.CSV_Database
+  alias Database.Moneda
   @doc """
   La funcion recibe un historial de transacciones, los argumentos de la linea de comando y un mapa de conversiones
   Devuelve un mapa con el balance de las monedas de las que dispone la cuenta solicitada
@@ -28,19 +30,8 @@ defmodule Commands.BalanceCommand do
 
   def output_balance({:ok, balance}, path) do
     output = balance
-      |> Enum.map(fn {nombre, monto} -> %{ nombre: nombre, monto: :erlang.float_to_binary(monto, [{:decimals, 6}])} end)
-    case path do
-      "console" ->
-        IO.puts("MONEDA=BALANCE")
-        Enum.each(output, fn moneda -> IO.puts("#{moneda.nombre}=#{moneda.monto}") end)
-      _ ->
-        case File.write(path, Enum.map(balance, fn {moneda, monto} -> "#{moneda}=#{:erlang.float_to_binary(monto, [{:decimals, 6}])}\n" end)) do
-          :ok -> IO.puts("Balance guardado en: #{path}")
-          {:error, reason} ->
-            IO.puts("Error al guardar el balance: #{reason}")
-            {:error, reason}
-        end
-    end
+      |> Enum.map(fn {nombre, monto} -> %Moneda{ nombre: nombre, valor: monto} end)
+    CSV_Database.write_in_output("MONEDA=BALANCE", output, path)
   end
 
   def output_balance({:error, line}, _) do
