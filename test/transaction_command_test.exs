@@ -91,4 +91,15 @@ defmodule TransactionCommandTest do
     filtros = %{cuenta_origen: "userX", cuenta_destino: "userY"}
     assert [] == TransactionsCommand.filter(transacciones, filtros)
   end
+
+  test "una busqueda sin coincidencias devuelve una lista vacia de transferencias" do
+    transactions = [
+      %Transaccion{id: 1, timestamp: "1754937004", moneda_origen: "USDT", moneda_destino: "", monto: 5000.0, cuenta_origen: "userA", cuenta_destino: "", tipo: :alta_cuenta},
+      %Transaccion{id: 2, timestamp: "1754937024", moneda_origen: "USDT", moneda_destino: "BTC", monto: 5000.0, cuenta_origen: "userA", cuenta_destino: "", tipo: :swap},
+      %Transaccion{id: 3, timestamp: "1755541804", moneda_origen: "ETH", moneda_destino: "", monto: 2.0, cuenta_origen: "userB", cuenta_destino: "", tipo: :alta_cuenta}
+    ]
+    expected = []
+    filters = %{cuenta_origen: "userX", cuenta_destino: "all"}
+    assert expected == TransactionsCommand.filter(transactions, filters)
+  end
 end
