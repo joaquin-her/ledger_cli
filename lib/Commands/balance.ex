@@ -7,6 +7,7 @@ defmodule Commands.BalanceCommand do
   alias Database.Moneda
   @doc """
   La funcion recibe un historial de transacciones, los argumentos de la linea de comando y un mapa de conversiones
+  Los argumentos deben tener como 'key' por lo menos ['cuenta_origen,'cuenta_destino', 'moneda']
   Devuelve un mapa con el balance de las monedas de las que dispone la cuenta solicitada
   o un error si la cuenta no fue dada de alta o si la moneda solicitada no esta en la lista de conversiones
   """
@@ -28,12 +29,15 @@ defmodule Commands.BalanceCommand do
     end
   end
 
+  @doc """
+  Recive una tupla con un estado :ok o :error y un balance para imprimir el error por consola o mapearlo con los structs Moneda y escribirlo con el modulo CSV_database
+  en la direccion de path
+  """
   def output_balance({:ok, balance}, path) do
     output = balance
       |> Enum.map(fn {nombre, monto} -> %Moneda{ nombre: nombre, valor: monto} end)
     CSV_Database.write_in_output("MONEDA=BALANCE", output, path)
   end
-
   def output_balance({:error, line}, _) do
     IO.puts("{:error, #{line}}")
   end
