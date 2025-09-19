@@ -3,8 +3,7 @@ defmodule Database.CSV_Database do
   Handler de archivos csv para almacenar y leer datos
   """
 
-
-  def read_transactions(path) do
+  def get_transactions(path) do
     transacciones = path
     |> File.stream!()
     |> CSV.decode!([separator: ?;,headers: true])
@@ -25,26 +24,10 @@ defmodule Database.CSV_Database do
     transacciones
   end
 
-  def get_transactions(path) do
-    read_transactions(path)
-  end
-
   def encode_transactions(transactions) do
     transactions
-    |> Enum.map(fn t ->
-      %{
-        id_transaccion: String.to_atom(t.id),
-        timestamp: t.timestamp,
-        moneda_origen: String.to_atom(t.moneda_origen),
-        moneda_destino: String.to_atom(t.moneda_destino),
-        cuenta_origen: String.to_atom(t.cuenta_origen),
-        cuenta_destino: String.to_atom(t.cuenta_destino),
-        monto: String.to_float(t.monto),
-        tipo: String.to_atom(t.tipo),
-      }
-    end)
-    |> CSV.encode(headers: true)
-    |> Enum.join()
+    |> Enum.map(fn t -> String.Chars.to_string(t) end)
+    |> Enum.join("\n")
   end
   defp console_log(transaction) do
     transaction
