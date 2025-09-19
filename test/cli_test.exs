@@ -1,10 +1,9 @@
 defmodule CliTest do
   use ExUnit.Case
   import ExUnit.CaptureIO
-  alias LedgerApp.CLI
-  test "print in console all transactions" do
+    test "print in console all transactions" do
     expected_output =
-"ID | TIMESTAMP | MONEDA_ORIGEN | MONEDA_DESTINO | MONTO | CUENTA_ORIGEN | CUENTA_DESTINO | TIPO\n" <>
+"ID;TIMESTAMP;MONEDA_ORIGEN;MONEDA_DESTINO;MONTO;CUENTA_ORIGEN;CUENTA_DESTINO;TIPO\n" <>
 "1;1754937004;USDT;USDT;100.5;userA;;alta_cuenta\n" <>
 "2;1755541804;BTC;USDT;0.1;userB;;swap\n" <>
 "3;1756751404;BTC;;50000.0;userC;;alta_cuenta\n" <>

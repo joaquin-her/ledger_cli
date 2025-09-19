@@ -26,7 +26,7 @@ defmodule LedgerApp.CLI do
   defp handle_transacciones(arguments) do
     CSV_Database.get_transactions(arguments.path_transacciones_data)
     |> TransactionsCommand.filter(arguments)
-    |> CSV_Database.write_transactions(arguments.output_path)
+    |> TransactionsCommand.output_transactions(arguments.output_path)
   end
 
   defp handle_balance(args) do
