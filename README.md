@@ -77,6 +77,7 @@ Los errores son atrapados en distintos niveles y devueltos al usuario con distin
 - el valor de los balances cuando superan las 6 decimales se redondean en esta cifra, no se truncan
 - los usuarios pueden tener valores negativos en su balances a modo de "deudas"
 - el balance entre dos usuarios no es un caso contemplado y genera un error {:error, descripcion}
-
+- no se valida que el formato de los archivos csv sea correcto, se asume que el usuario provee archivos con el formato correcto, por lo que pueden ocurrir errores con que las columnas no existan o tengan nombres distintos o que no contengan un header
+- los archivos csv deben estar separados por punto y coma (;)
 Documentation can be generated with [ExDoc](https://github.com/elixir-lang/ex_doc)
 
