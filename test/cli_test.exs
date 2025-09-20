@@ -1,5 +1,6 @@
 defmodule CliTest do
   use ExUnit.Case
+  alias TestHelpers, as: TestHelper
   import ExUnit.CaptureIO
     test "print in console all transactions" do
     expected_output =
@@ -63,4 +64,28 @@ defmodule CliTest do
     end)
 
   end
+
+  test "una transaccion entre dos cuentas se obtienen correctamente" do
+    content = """
+      id_transaccion;timestamp;moneda_origen;moneda_destino;monto;cuenta_origen;cuenta_destino;tipo
+      1;1754937001;USDT;;18000;userA;;alta_cuenta
+      2;1754937002;EUR;;25000;userB;;alta_cuenta
+      3;1754937010;USDT;USDT;1200;userA;userB;transferencia
+      4;1754937030;USDT;USDT;2300;userA;userC;transferencia
+      5;1754937060;USDT;USDT;800;userA;userD;transferencia
+      6;1754937070;USDT;USDT;6150;userA;userE;transferencia
+      7;1754937090;EUR;EUR;3980;userB;userA;transferencia
+      """
+    expected_output = """
+      ID_TRANSACCION;TIMESTAMP;MONEDA_ORIGEN;MONEDA_DESTINO;MONTO;CUENTA_ORIGEN;CUENTA_DESTINO;TIPO
+      3;1754937010;USDT;USDT;1200.0;userA;userB;transferencia
+      """
+    test_path = TestHelper.create_temp_csv(content, "transaccion_entre_cuentas.csv")
+    arguments = ["transacciones", "-t", test_path, "-c1", "userA", "-c2", "userB"]
+    assert expected_output == capture_io(fn ->
+      LedgerApp.CLI.main(arguments)
+    end)
+    TestHelper.cleanup_temp_file(test_path)
+  end
+
 end

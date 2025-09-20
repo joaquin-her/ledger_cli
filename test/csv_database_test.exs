@@ -51,6 +51,18 @@ defmodule Ledger.CSV_Database_Tests do
     test_path = TestHelper.create_temp_csv(content, "transaccion_tipo_invalido.csv")
     assert {:error, 2} == CSV_Database.get_transactions(test_path)
     TestHelper.cleanup_temp_file(test_path)
+  end
 
+  test "una moneda con precio negativo en el archivo de monedas arroja un error con la linea donde fue encontrada" do
+    content = """
+      nombre_moneda;precio_usd
+      USDT;1.0
+      BTC;30000.0
+      ETH;-2000.0
+      ARS;0.005
+      """
+    test_path = TestHelper.create_temp_csv(content, "moneda_precio_invalido.csv")
+    assert {:error, 3} == CSV_Database.get_currencies(test_path)
+    TestHelper.cleanup_temp_file(test_path)
   end
 end

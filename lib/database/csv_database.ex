@@ -75,9 +75,14 @@ defmodule Database.CSV_Database do
     path
     |> File.stream!()
     |> CSV.decode!(separator: ?;, headers: true)
-    |> Enum.reduce( %{} ,fn row, currencies ->
-      Map.put(currencies, row["nombre_moneda"], row["precio_usd"] |> String.to_float())
-      end)
-    |> then(fn map -> {:ok, map} end)
+    |> Enum.with_index(1)
+    |> Enum.reduce_while({:ok, %{}}, fn {row, index}, {:ok, currencies} ->
+      price = row["precio_usd"] |> String.to_float()
+      if price < 0 do
+        {:halt, {:error, index}}
+      else
+        {:cont, {:ok, Map.put(currencies, row["nombre_moneda"], price)}}
+      end
+    end)
   end
 end
