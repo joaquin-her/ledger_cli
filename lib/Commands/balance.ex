@@ -18,19 +18,20 @@ defmodule Commands.BalanceCommand do
       balance<- convert_to_currency(balance, arguments.moneda, conversion_map) do
         {:ok, balance}
     else
-      {:error, reason} -> {:error, reason}
+      {:error, line} -> {:error, line}
     end
   end
 
   @doc """
-  Recive una tupla con un estado :ok o :error y un balance para imprimir el error por consola o mapearlo con los structs Moneda y escribirlo con el modulo CSV_database
-  en la direccion de path
+  Recibe una tupla con un estado :ok o :error y un balance para imprimir el error por consola o mapearlo con los structs Moneda y escribirlo con el modulo CSV_database
+  en la direccion de path. Devuelve :ok o un error si no se pudo escribir en el archivo
   """
   def output_balance(balance, path) do
     output = balance
       |> Enum.map(fn {nombre, monto} -> %Moneda{ nombre: nombre, valor: monto} end)
     CSV_Database.write_in_output("MONEDA=BALANCE", output, path)
   end
+
   defp reduce_transactions(transactions, arguments, conversion_map) do
     try do
       balance = transactions
@@ -43,12 +44,12 @@ defmodule Commands.BalanceCommand do
             :swap ->
               apply_swap(balance, transaction, conversion_map)
             _ ->
-              raise RuntimeError
+              raise RuntimeError, message: "error en transaction_id=#{transaction.id}"
             end
        end)
       {:ok, balance}
     rescue
-      RuntimeError -> {:error, RuntimeError.message()}
+      e in RuntimeError -> {:error, e.message}
     end
   end
 
@@ -99,7 +100,7 @@ defmodule Commands.BalanceCommand do
         |> add_amount(transaction.moneda_origen,transaction.monto * -1)
         |> add_amount(transaction.moneda_destino, destino_from_usd)
       _ ->
-        {:error, transaction.id}
+        raise RuntimeError, message: "error en transaction_id=#{transaction.id}"
     end
   end
 end

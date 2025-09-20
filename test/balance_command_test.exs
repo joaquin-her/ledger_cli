@@ -116,9 +116,9 @@ defmodule BalanceCommandTests do
 
   test "el balance de una cuenta se imprime correctamente por consola" do
     expected_output = "MONEDA=BALANCE\nUSDT=500.000000\nBTC=0.000000\nDOGE=6026585.223232\n"
-    balance = {:ok, %{DOGE: 6026585.223232, USDT: 500.0, BTC: 0.0}}
+    balance = %{DOGE: 6026585.223232, USDT: 500.0, BTC: 0.0}
     output_path = "console"
-    assert {:ok, expected_output} == ExUnit.CaptureIO.capture_io(fn ->
+    assert expected_output == ExUnit.CaptureIO.capture_io(fn ->
       BalanceCommand.output_balance(balance, output_path)
     end)
   end
@@ -142,7 +142,7 @@ defmodule BalanceCommandTests do
     ]
     conversion_values = %{}
     arguments = %{cuenta_origen: "userB", moneda: "all"}
-    assert {:error, 3} == BalanceCommand.get_balance(transactions, arguments, conversion_values)
+    assert {:error, "error en transaction_id=3"} == BalanceCommand.get_balance(transactions, arguments, conversion_values)
   end
 
   test "un swap en una moneda no registrada en el mapa de conversion arroja un error con la linea donde fue encontrada" do
@@ -153,7 +153,7 @@ defmodule BalanceCommandTests do
     ]
     conversion_values = %{"USDT" => 1.0, "ETH" => 2500.00}
     arguments = %{cuenta_origen: "userA", moneda: "all"}
-    assert {:error, 2} == BalanceCommand.get_balance(transactions, arguments, conversion_values)
+    assert {:error, "error en transaction_id=2"} == BalanceCommand.get_balance(transactions, arguments, conversion_values)
   end
 
 

@@ -45,8 +45,8 @@ defmodule Database.CSV_Database do
     |> List.insert_at(0, header)
     |> Enum.join("\n")
   end
-  defp console_log(transaction) do
-    transaction
+  defp console_log(line) do
+    line
     |> IO.puts()
   end
   def write_in_output(header, content, output_path) do
@@ -57,7 +57,8 @@ defmodule Database.CSV_Database do
         |> Enum.each(fn t -> console_log(t) end)
       _ ->
         case File.write(output_path, join_content(header, content)) do
-          :ok -> IO.puts("Transacciones guardadas en: #{output_path}")
+          :ok ->
+            :ok
           {:error, reason} ->
             IO.puts("Error al guardar las transacciones: #{reason}")
             {:error, reason}
