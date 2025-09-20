@@ -3,7 +3,7 @@ defmodule CliTest do
   import ExUnit.CaptureIO
     test "print in console all transactions" do
     expected_output =
-"ID;TIMESTAMP;MONEDA_ORIGEN;MONEDA_DESTINO;MONTO;CUENTA_ORIGEN;CUENTA_DESTINO;TIPO\n" <>
+"ID_TRANSACCION;TIMESTAMP;MONEDA_ORIGEN;MONEDA_DESTINO;MONTO;CUENTA_ORIGEN;CUENTA_DESTINO;TIPO\n" <>
 "1;1754937004;USDT;USDT;100.5;userA;;alta_cuenta\n" <>
 "2;1755541804;BTC;USDT;0.1;userB;;swap\n" <>
 "3;1756751404;BTC;;50000.0;userC;;alta_cuenta\n" <>
@@ -22,11 +22,17 @@ defmodule CliTest do
   end
 
   test "no tener como objetivo una cuenta especifica debe arrojar una excepcion" do
-      assert true
+    expected_output = "Error: Debe especificar una cuenta origen con -c1\n"
+    assert capture_io(fn ->
+      LedgerApp.CLI.main(["balance", "-t", "test_data.csv", "-m", "DOGE"])
+    end) == expected_output
   end
 
-  test "si la cuenta buscada no esta dentro de los datos debe devolver un :error y la causa de por que es un error" do
-      assert true
+  test "si la cuenta buscada no esta dentro de los datos debe devolver una lista de transacciones vacia" do
+    expected_output = "ID_TRANSACCION;TIMESTAMP;MONEDA_ORIGEN;MONEDA_DESTINO;MONTO;CUENTA_ORIGEN;CUENTA_DESTINO;TIPO\n"
+    assert capture_io(fn ->
+      LedgerApp.CLI.main(["transacciones", "-t", "test_data.csv", "-c1", "userX"])
+    end) == expected_output
   end
 
   test "una moneda fuera del mapa de conversion devuelve un error" do

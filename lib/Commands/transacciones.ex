@@ -17,7 +17,7 @@ defmodule Commands.TransactionsCommand do
   Imprime el contenido de las transacciones con un header en la ruta path
   """
   def output_transactions(content, path) do
-    CSV_Database.write_in_output("ID;TIMESTAMP;MONEDA_ORIGEN;MONEDA_DESTINO;MONTO;CUENTA_ORIGEN;CUENTA_DESTINO;TIPO", content, path)
+    CSV_Database.write_in_output("ID_TRANSACCION;TIMESTAMP;MONEDA_ORIGEN;MONEDA_DESTINO;MONTO;CUENTA_ORIGEN;CUENTA_DESTINO;TIPO", content, path)
   end
 
   defp filter_by_origin_account(transactions, account_name) do

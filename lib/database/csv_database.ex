@@ -7,7 +7,7 @@ defmodule Database.CSV_Database do
   Devuelve una lista de transacciones de tipo struct Transaccion obtenidas en el archivos csv con header en 'path'
   """
   def get_transactions(path) do
-    transacciones = path
+    path
     |> File.stream!()
     |> CSV.decode!([separator: ?;,headers: true])
     |> Enum.with_index(1)

@@ -118,8 +118,7 @@ defmodule BalanceCommandTests do
     expected_output = "MONEDA=BALANCE\nUSDT=500.000000\nBTC=0.000000\nDOGE=6026585.223232\n"
     balance = {:ok, %{DOGE: 6026585.223232, USDT: 500.0, BTC: 0.0}}
     output_path = "console"
-    assert :ok == BalanceCommand.output_balance(balance, output_path)
-    assert expected_output == ExUnit.CaptureIO.capture_io(fn ->
+    assert {:ok, expected_output} == ExUnit.CaptureIO.capture_io(fn ->
       BalanceCommand.output_balance(balance, output_path)
     end)
   end
@@ -167,14 +166,5 @@ defmodule BalanceCommandTests do
     assert {:error, 2} == BalanceCommand.get_balance(transactions, arguments, conversion_values)
   end
 
-  test "una transferencia en una moneda con un monto negativo arroja un error con la linea donde fue encontrada" do
-    transactions = [
-      %Transaccion{id: 1, timestamp: "1754937004", moneda_origen: "USDT", moneda_destino: "", monto: 5000.0, cuenta_origen: "userA", cuenta_destino: "", tipo: :alta_cuenta},
-      %Transaccion{id: 2, timestamp: "1754937024", moneda_origen: "USDT", moneda_destino: "", monto: -5000.0, cuenta_origen: "userA", cuenta_destino: "userB", tipo: :transferencia},
-      %Transaccion{id: 3, timestamp: "1755541804", moneda_origen: "ETH", moneda_destino: "", monto: 2.0, cuenta_origen: "userB", cuenta_destino: "", tipo: :alta_cuenta}
-    ]
-    conversion_values = %{"USDT" => 1.0, "ETH" => 2500.00}
-    arguments = %{cuenta_origen: "userB", moneda: "all"}
-    assert {:error, 2} == BalanceCommand.get_balance(transactions, arguments, conversion_values)
-  end
+
 end

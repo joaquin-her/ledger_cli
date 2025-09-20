@@ -24,9 +24,10 @@ defmodule LedgerApp.CLI do
   end
 
   defp handle_transacciones(arguments) do
-    CSV_Database.get_transactions(arguments.path_transacciones_data)
-    |> TransactionsCommand.filter(arguments)
-    |> TransactionsCommand.output_transactions(arguments.output_path)
+    with {:ok, transactions} <- CSV_Database.get_transactions(arguments.path_transacciones_data) do
+      TransactionsCommand.filter(transactions, arguments)
+      |> TransactionsCommand.output_transactions(arguments.output_path)
+    end
   end
 
   defp handle_balance(args) do
@@ -34,24 +35,27 @@ defmodule LedgerApp.CLI do
       "all" ->
         IO.puts("Error: Debe especificar una cuenta origen con -c1")
       _ ->
-        {conversion_map, transactions} = {
-          CSV_Database.get_currencies(args.path_currencies_data),
-
-        }
-        case Map.has_key?(conversion_map, args.moneda) || args.moneda == "all" do
-          false ->
-            IO.puts("La moneda no existe en el archivo de monedas")
-            true ->
-              with {:ok, transactions} <- CSV_Database.get_transactions(args.path_transacciones_data),
-                {:ok, conversion_map} <- CSV_Database.get_currencies(args.path_currencies_data),
-                {:ok, balance} <- BalanceCommand.get_balance(transactions, args, conversion_map),
-                do: BalanceCommand.output_balance(balance, args.output_path)
-            false ->
-              IO.puts("La moneda no existe en el archivo de monedas")
-
-      end
+        with(
+          {:ok, conversion_map} <- CSV_Database.get_currencies(args.path_currencies_data),
+          {:ok, transactions} <- CSV_Database.get_transactions(args.path_transacciones_data),
+          {:ok, _} <- validate_conversion_coins(args.moneda, conversion_map),
+          {:ok, balance} <- BalanceCommand.get_balance(transactions, args, conversion_map)
+        ) do
+          BalanceCommand.output_balance(balance, args.output_path)
+        else
+          {:error, reason} -> IO.puts("#{reason}")
+          false -> IO.puts("La moneda no existe en el archivo de monedas")
+        end
     end
   end
+
+  defp validate_conversion_coins(moneda, conversion_map) do
+    case Map.has_key?(conversion_map, moneda) || moneda == "all" do
+      true -> {:ok, "Moneda valida"}
+      _ -> {:error, "La moneda no existe en el archivo de monedas"}
+    end
+  end
+
 
   defp parse_args(args) do
     [command | arguments] = args

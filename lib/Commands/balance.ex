@@ -13,14 +13,13 @@ defmodule Commands.BalanceCommand do
   """
   def get_balance(transactions, arguments, conversion_map) do
     filtered_transactions = TransactionsCommand.get_transactions_of_account(transactions, arguments.cuenta_origen)
-    case is_registerd?(filtered_transactions, arguments.cuenta_origen) do
-      true ->
-        filtered_transactions
-        |> reduce_transactions(arguments, conversion_map)
-        |> convert_to_currency(arguments.moneda, conversion_map)
-        |> then(fn balance -> {:ok, balance} end)
-      false ->
-        { :error, "la cuenta solicitada no fue dada de alta"}
+    with {true, _} <- is_registerd?(filtered_transactions, arguments.cuenta_origen),
+      {:ok, balance} <- reduce_transactions( filtered_transactions, arguments, conversion_map),
+      {:ok, balance} <- convert_to_currency(balance, arguments.moneda, conversion_map) do
+        IO.puts("Balance calculado correctamente")
+        {:ok, balance}
+    else
+      {:error, reason} -> {:error, reason}
     end
   end
 
@@ -28,36 +27,30 @@ defmodule Commands.BalanceCommand do
   Recive una tupla con un estado :ok o :error y un balance para imprimir el error por consola o mapearlo con los structs Moneda y escribirlo con el modulo CSV_database
   en la direccion de path
   """
-  def output_balance({:ok, balance}, path) do
+  def output_balance(balance, path) do
     output = balance
       |> Enum.map(fn {nombre, monto} -> %Moneda{ nombre: nombre, valor: monto} end)
     CSV_Database.write_in_output("MONEDA=BALANCE", output, path)
   end
-  def output_balance({:error, line}, _) do
-    IO.puts("{:error, #{line}}")
-  end
-
   defp reduce_transactions(transactions, arguments, conversion_map) do
-    transactions
-    |> Enum.reduce(%{}, fn transaction, balance ->
-      case transaction.monto < 0 do
-        true -> raise %RuntimeError{message: "#{transaction.id}"}
-        false -> nil
-      end
-      case transaction.tipo do
-        :transferencia ->
-          balance
-          |> apply_transaction_to_balance(transaction, arguments.cuenta_origen)
-        :alta_cuenta ->
-          balance
-          |> add_amount(transaction.moneda_origen, transaction.monto)
-        :swap ->
-          balance
-          |> apply_swap( transaction, conversion_map)
-        _ ->
-          raise %RuntimeError{message: "#{transaction.id}"}
-      end
-    end)
+    try do
+      balance = transactions
+        |> Enum.reduce(%{}, fn transaction, balance->
+          case transaction.tipo do
+            :transferencia ->
+              apply_transaction_to_balance(balance, transaction, arguments.cuenta_origen)
+            :alta_cuenta ->
+              add_amount(balance, transaction.moneda_origen, transaction.monto)
+            :swap ->
+              apply_swap(balance, transaction, conversion_map)
+            _ ->
+              raise RuntimeError
+            end
+       end)
+      {:ok, balance}
+    rescue
+      RuntimeError -> {:error, RuntimeError.message()}
+    end
   end
 
   defp add_amount(balance, currency, amount) do
@@ -92,7 +85,10 @@ defmodule Commands.BalanceCommand do
   end
 
   defp is_registerd?(transactions, account_name) do
-    Enum.any?(transactions, fn t -> t.cuenta_origen == account_name && t.tipo == :alta_cuenta end )
+    case Enum.any?(transactions, fn t -> t.cuenta_origen == account_name && t.tipo == :alta_cuenta end ) do
+      true -> {true, "Cuenta registrada"}
+      false -> {:error, "la cuenta solicitada no fue dada de alta"}
+    end
   end
 
   defp apply_swap(balance, transaction, conversion_map) do
@@ -104,7 +100,7 @@ defmodule Commands.BalanceCommand do
         |> add_amount(transaction.moneda_origen,transaction.monto * -1)
         |> add_amount(transaction.moneda_destino, destino_from_usd)
       _ ->
-        raise %RuntimeError{message: "#{transaction.id}"}
+        {:error, transaction.id}
     end
   end
 end
