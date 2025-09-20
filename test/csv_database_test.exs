@@ -1,8 +1,6 @@
 defmodule Ledger.CSV_Database_Tests do
   use ExUnit.Case
-  alias ElixirLS.LanguageServer.Providers.CodeLens.Test
   alias Database.CSV_Database
-
   alias TestHelpers, as: TestHelper
   alias Transaction
   alias Database.Moneda
@@ -19,11 +17,11 @@ defmodule Ledger.CSV_Database_Tests do
 
   test "se muestra correctamente un balance por salida definida en flag -o" do
     test_path = TestHelper.create_temp_csv("", "test_file.csv")
-    balance = %{BTC: 10000.0, ETH: 2000.0, USDT: 4000.0}
+    balance = %{BTC: 10000.0, ETH: 2000.0, ARS: 4000.0}
       |> Enum.map(fn {nombre, monto} -> %Moneda{ nombre: nombre, valor: monto} end)
     CSV_Database.write_in_output("MONEDA=BALANCE", balance, test_path)
     contenido = File.read!(test_path)
-    assert contenido == "MONEDA=BALANCE\nARS=3.000000\nBTC=1.000000\nETH=2.000000\nEUR=5.000000\nUSDT=4.000000\n"
+    assert contenido == "MONEDA=BALANCE\nARS=4000.000000\nBTC=10000.000000\nETH=2000.000000"
     File.rm!(test_path)
   end
 

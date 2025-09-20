@@ -115,7 +115,7 @@ defmodule BalanceCommandTests do
   end
 
   test "el balance de una cuenta se imprime correctamente por consola" do
-    expected_output = "MONEDA=BALANCE\nUSDT=500.000000\nBTC=0.000000\nDOGE=6026585.223232\n"
+    expected_output = "MONEDA=BALANCE\nBTC=0.000000\nDOGE=6026585.223232\nUSDT=500.000000\n"
     balance = %{DOGE: 6026585.223232, USDT: 500.0, BTC: 0.0}
     output_path = "console"
     assert expected_output == ExUnit.CaptureIO.capture_io(fn ->

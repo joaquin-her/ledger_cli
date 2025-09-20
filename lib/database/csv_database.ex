@@ -26,8 +26,7 @@ defmodule Database.CSV_Database do
       ) do
         {:ok, transaccion} ->
           {:cont, {:ok, [transaccion | acc]}}
-        {:error, reason} ->
-          IO.puts("Error en la transaccion con ID: #{reason}")
+        {:error, _} ->
           {:halt, {:error, index}}
       end
     end)
@@ -50,6 +49,9 @@ defmodule Database.CSV_Database do
     |> IO.puts()
   end
   def write_in_output(header, content, output_path) do
+    content = content
+      |> Enum.map(fn t -> String.Chars.to_string(t) end)
+      |> Enum.sort()
     case output_path do
       "console" ->
         console_log(header)
