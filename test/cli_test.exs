@@ -36,7 +36,7 @@ defmodule CliTest do
   end
 
   test "una moneda fuera del mapa de conversion devuelve un error" do
-    expected_output = "La moneda no existe en el archivo de monedas\n"
+    expected_output = "{:error, La moneda no existe en el archivo de monedas}\n"
     assert capture_io(fn ->
       LedgerApp.CLI.main(["balance", "-c1", "userA", "-t", "test_data.csv", "-m", "DOGE"])
     end) == expected_output

@@ -15,6 +15,9 @@
 - [x] Validar durante la conversion del csv la existencia de las monedas utilizadas en moneda_origen y moneda_destino
  - [ ] Validar que los archivos de donde se lee la informacion tengan el formato correcto a medida que se leen (mover las validaciones a este punto)
  
+- [ ] validar que las transacciones entre dos usuarios se pueden obtener
+- [ ] validar que el balance entre dos usuarios no se pueden obtener
+
 - Balance:
 - [x] Hacer necesario el flag -c1
 - [x] Obtener el balance de la cuenta dada la moneda en -m
@@ -32,6 +35,7 @@
 - el valor de los balances cuando superan las 6 decimales se redondean en esta cifra, no se truncan
 - los usuarios pueden tener valores negativos en su balances a modo de "deudas"
 - los errores de el parseo en el csv son atrapados durante la utilizacion de los datos, no de cuando se leen.
+- el balance entre dos usuarios no es un caso contemplado
 
 Documentation can be generated with [ExDoc](https://github.com/elixir-lang/ex_doc)
 and published on [HexDocs](https://hexdocs.pm). Once published, the docs can

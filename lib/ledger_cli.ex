@@ -27,7 +27,10 @@ defmodule LedgerApp.CLI do
     with {:ok, transactions} <- CSV_Database.get_transactions(arguments.path_transacciones_data) do
       TransactionsCommand.filter(transactions, arguments)
       |> TransactionsCommand.output_transactions(arguments.output_path)
+    else
+      {:error, reason} -> IO.puts("{:error, #{reason}}")
     end
+    # aca debe devolver un error y la linea de donde saltó
   end
 
   defp handle_balance(args) do
@@ -43,7 +46,7 @@ defmodule LedgerApp.CLI do
         ) do
           BalanceCommand.output_balance(balance, args.output_path)
         else
-          {:error, reason} -> IO.puts("#{reason}")
+          {:error, reason} -> IO.puts("{:error, #{reason}}")
           false -> IO.puts("La moneda no existe en el archivo de monedas")
         end
     end
