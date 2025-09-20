@@ -1,5 +1,4 @@
 id_transaccion;timestamp;moneda_origen;moneda_destino;monto;cuenta_origen;cuenta_destino;tipo
-<<<<<<< HEAD
 1;1754937001;USDT;;18000;userA;;alta_cuenta
 2;1754937002;EUR;;25000;userB;;alta_cuenta
 3;1754937003;ARS;;25000000;userC;;alta_cuenta
