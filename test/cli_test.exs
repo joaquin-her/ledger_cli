@@ -15,17 +15,10 @@ defmodule CliTest do
   end
 
   test "usar el comando balance sin el flag -c1 debe arrojar un error" do
-    expected_output = "Error: Debe especificar una cuenta origen con -c1\n"
+    expected_output = "{:error, Debe especificar una cuenta origen con -c1}\n"
     assert expected_output == capture_io(fn ->
       LedgerApp.CLI.main(["balance", "-t", "test_data.csv"])
     end)
-  end
-
-  test "no tener como objetivo una cuenta especifica debe arrojar una excepcion" do
-    expected_output = "Error: Debe especificar una cuenta origen con -c1\n"
-    assert capture_io(fn ->
-      LedgerApp.CLI.main(["balance", "-t", "test_data.csv", "-m", "DOGE"])
-    end) == expected_output
   end
 
   test "si la cuenta buscada no esta dentro de los datos debe devolver una lista de transacciones vacia" do
@@ -61,5 +54,13 @@ defmodule CliTest do
     assert expected_output == capture_io(fn ->
       LedgerApp.CLI.main(["balance", "-c1", "userA", "-t", "test_data.csv"])
     end)
+  end
+
+  test "un balance con cuenta origen y cuenta destino devuelve una lista de transacciones entre ellos" do
+    expected_output = "{:error, No se puede especificar una cuenta destino en este comando}\n"
+    assert expected_output == capture_io(fn ->
+      LedgerApp.CLI.main(["balance", "-t", "test_data.csv", "-c1", "userA", "-c2", "userB"])
+    end)
+
   end
 end

@@ -34,23 +34,24 @@ defmodule LedgerApp.CLI do
   end
 
   defp handle_balance(args) do
-    case args.cuenta_origen do
-      "all" ->
-        IO.puts("Error: Debe especificar una cuenta origen con -c1")
-      _ ->
-        with(
-          {:ok, conversion_map} <- CSV_Database.get_currencies(args.path_currencies_data),
-          {:ok, transactions} <- CSV_Database.get_transactions(args.path_transacciones_data),
-          {:ok, _} <- validate_conversion_coins(args.moneda, conversion_map),
-          {:ok, balance} <- BalanceCommand.get_balance(transactions, args, conversion_map)
-        ) do
-          BalanceCommand.output_balance(balance, args.output_path)
-        else
-          {:error, reason} -> IO.puts("{:error, #{reason}}")
-          false -> IO.puts("La moneda no existe en el archivo de monedas")
-        end
+    with(
+      {:ok, _} <- validate_origen(args.cuenta_origen),
+      {:ok, _} <- validate_destino(args.cuenta_destino),
+      {:ok, conversion_map} <- CSV_Database.get_currencies(args.path_currencies_data),
+      {:ok, _} <- validate_conversion_coins(args.moneda, conversion_map),
+      {:ok, transactions} <- CSV_Database.get_transactions(args.path_transacciones_data),
+      {:ok, balance} <- BalanceCommand.get_balance(transactions, args, conversion_map)
+    ) do
+      BalanceCommand.output_balance(balance, args.output_path)
+    else
+      {:error, reason} -> IO.puts("{:error, #{reason}}")
     end
   end
+
+  defp validate_origen("all"), do: {:error, "Debe especificar una cuenta origen con -c1"}
+  defp validate_origen(_), do: {:ok, "Cuenta origen valida"}
+  defp validate_destino("all"), do: {:ok, "Cuenta destino valida"}
+  defp validate_destino(_), do: {:error, "No se puede especificar una cuenta destino en este comando"}
 
   defp validate_conversion_coins(moneda, conversion_map) do
     case Map.has_key?(conversion_map, moneda) || moneda == "all" do
