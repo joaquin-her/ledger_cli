@@ -10,26 +10,39 @@ defmodule Database.CSV_Database do
     transacciones = path
     |> File.stream!()
     |> CSV.decode!([separator: ?;,headers: true])
-    |> Enum.map(fn row ->
-      %Transaccion{
-        id: row["id_transaccion"] |> String.to_integer(),
-        tipo: row["tipo"] |> String.to_atom(),
-        cuenta_origen: row["cuenta_origen"],
-        cuenta_destino: row["cuenta_destino"],
-        moneda_origen: row["moneda_origen"],
-        moneda_destino: row["moneda_destino"],
-        monto: row["monto"]
+    |> Enum.with_index(1)
+    |> Enum.reduce_while({:ok, []}, fn {row, index}, {:ok, acc} ->
+      case Transaccion.new(
+        row["id_transaccion"] |> String.to_integer(),
+        row["timestamp"],
+        row["moneda_origen"],
+        row["moneda_destino"],
+        row["monto"]
         |> Float.parse()
         |> elem(0),
-        timestamp: row["timestamp"]
-     }
+        row["cuenta_origen"],
+        row["cuenta_destino"],
+        row["tipo"] |> String.to_atom()
+      ) do
+        {:ok, transaccion} ->
+          {:cont, {:ok, [transaccion | acc]}}
+        {:error, reason} ->
+          IO.puts("Error en la transaccion con ID: #{reason}")
+          {:halt, {:error, index}}
+      end
     end)
-    transacciones
+    |> case do
+      {:ok, transactions} -> {:ok, Enum.reverse(transactions)}
+      error -> error
+    end
+  rescue
+    exception ->
+      {:error, "Error leyendo archivo: #{Exception.message(exception)}"}
   end
 
   defp join_content(header, content) do
-    header
-    |> Enum.concat(Enum.map(content, fn t -> String.Chars.to_string(t) end))
+    Enum.map(content, fn t -> String.Chars.to_string(t) end)
+    |> List.insert_at(0, header)
     |> Enum.join("\n")
   end
   defp console_log(transaction) do
@@ -62,5 +75,6 @@ defmodule Database.CSV_Database do
     |> Enum.reduce( %{} ,fn row, currencies ->
       Map.put(currencies, row["nombre_moneda"], row["precio_usd"] |> String.to_float())
       end)
+    |> then(fn map -> {:ok, map} end)
   end
 end
