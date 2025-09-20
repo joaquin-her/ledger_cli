@@ -15,8 +15,7 @@ defmodule Commands.BalanceCommand do
     filtered_transactions = TransactionsCommand.get_transactions_of_account(transactions, arguments.cuenta_origen)
     with {true, _} <- is_registerd?(filtered_transactions, arguments.cuenta_origen),
       {:ok, balance} <- reduce_transactions( filtered_transactions, arguments, conversion_map),
-      {:ok, balance} <- convert_to_currency(balance, arguments.moneda, conversion_map) do
-        IO.puts("Balance calculado correctamente")
+      balance<- convert_to_currency(balance, arguments.moneda, conversion_map) do
         {:ok, balance}
     else
       {:error, reason} -> {:error, reason}
