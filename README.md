@@ -17,6 +17,12 @@ El programa luego de ser compilado puede ser ejecutado desde la terminal con el 
 ```bash
 ./ledger <subcommand> [options]
 ```
+- **Flags comunes**:
+    - -t: archivo de transacciones (por defecto transacciones.csv)
+    - -o: archivo de salida (por defecto consola)
+    - -m: moneda (por defecto all)
+    - -c1: usa una cuenta origen especifica
+
 
 ## Modo de uso
 - **Transacciones**:
@@ -32,10 +38,6 @@ El programa luego de ser compilado puede ser ejecutado desde la terminal con el 
 - Permite btener el balance de la cuenta dada la moneda en -m, por defecto "all". La moneda debe estar en el archivo de monedas.csv
 - Su resultado puede ser escrito en consola (por defecto) o en un archivo con -o
 - Se puede utilizar un archivo de transacciones distinto al por defecto con -t
-
-- [ ] Crear mas casos de pruebas para los distintos modulos
-- [ ] Reordenar el codigo en modulos y funciones mas responsablemente
-
 #### Ejemplos de uso:
 ```bash
 # List all transactions
